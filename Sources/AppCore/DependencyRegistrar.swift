@@ -42,9 +42,9 @@ public struct DependencyRegistrar {
         let userRepository = UserRepository(remoteDataSource: dataSources.userDataSource)
         let commentRepository = CommentRepository(remoteDataSource: dataSources.commentDataSource)
 
-        self.container.register(articleRepository)
-        self.container.register(userRepository)
-        self.container.register(commentRepository)
+        self.container.register(articleRepository as ArticleRepositoryProtocol)
+        self.container.register(userRepository as UserRepositoryProtocol)
+        self.container.register(commentRepository as CommentRepositoryProtocol)
 
         return Repositories(
             articleRepository: articleRepository,

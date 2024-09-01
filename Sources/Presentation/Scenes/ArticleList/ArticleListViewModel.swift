@@ -7,15 +7,15 @@ public class ArticleListViewModel: ObservableObject {
     @Published public var showError = false
     @Published public var errorMessage = ""
 
-    private let articleUseCase: ArticleUseCases
+    private let fetchArticlesUseCase: FetchArticlesUseCase
 
-    public init(articleUseCase: ArticleUseCases) {
-        self.articleUseCase = articleUseCase
+    public init(fetchArticlesUseCase: FetchArticlesUseCase) {
+        self.fetchArticlesUseCase = fetchArticlesUseCase
     }
 
     public func fetchArticles() async {
         do {
-            self.articles = try await self.articleUseCase.getArticles()
+            self.articles = try await self.fetchArticlesUseCase.execute()
         } catch {
             self.errorMessage = error.localizedDescription
             self.showError = true
