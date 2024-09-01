@@ -12,6 +12,6 @@ public class GetArticleUseCaseImpl: GetArticleUseCase {
     }
 
     public func execute(id: UUID) async throws -> Article {
-        return try await self.articleRepository.getArticle(id: id)
+        try await self.articleRepository.getArticle(id: id)
     }
 }

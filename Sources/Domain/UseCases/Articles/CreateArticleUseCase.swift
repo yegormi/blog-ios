@@ -12,6 +12,6 @@ public class CreateArticleUseCaseImpl: CreateArticleUseCase {
     }
 
     public func execute(title: String, content: String) async throws -> Article {
-        return try await self.articleRepository.createArticle(title: title, content: content)
+        try await self.articleRepository.createArticle(title: title, content: content)
     }
 }

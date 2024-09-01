@@ -1,11 +1,13 @@
 import SwiftUI
 
 public struct LoginView: View {
-    @EnvironmentObject var authViewModel: AuthViewModel
+    @ObservedObject var viewModel: AuthViewModel
     @State private var email = ""
     @State private var password = ""
 
-    public init() {}
+    public init(viewModel: AuthViewModel) {
+        self.viewModel = viewModel
+    }
 
     public var body: some View {
         NavigationView {
@@ -28,14 +30,14 @@ public struct LoginView: View {
             }
             .navigationTitle("Login")
         }
-        .alert("Error", isPresented: self.$authViewModel.showError) {
+        .alert("Error", isPresented: self.$viewModel.showError) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text(self.authViewModel.errorMessage)
+            Text(self.viewModel.errorMessage)
         }
     }
 
     private func login() async {
-        await self.authViewModel.login(email: self.email, password: self.password)
+        await self.viewModel.login(email: self.email, password: self.password)
     }
 }

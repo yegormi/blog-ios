@@ -12,6 +12,6 @@ public class UpdateArticleUseCaseImpl: UpdateArticleUseCase {
     }
 
     public func execute(id: UUID, title: String, content: String) async throws -> Article {
-        return try await self.articleRepository.updateArticle(id: id, title: title, content: content)
+        try await self.articleRepository.updateArticle(id: id, title: title, content: content)
     }
 }

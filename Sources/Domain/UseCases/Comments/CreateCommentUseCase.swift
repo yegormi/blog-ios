@@ -12,6 +12,6 @@ public class CreateCommentUseCaseImpl: CreateCommentUseCase {
     }
 
     public func execute(content: String, articleId: UUID) async throws -> Comment {
-        return try await self.commentRepository.createComment(content: content, articleId: articleId)
+        try await self.commentRepository.createComment(content: content, articleId: articleId)
     }
 }

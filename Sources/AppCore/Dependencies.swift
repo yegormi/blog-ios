@@ -27,12 +27,14 @@ struct ArticleUseCases {
     let updateArticleUseCase: UpdateArticleUseCase
     let deleteArticleUseCase: DeleteArticleUseCase
 }
+
 struct AuthUseCases {
     let loginUseCase: LoginUseCase
     let registerUseCase: RegisterUseCase
     let logoutUseCase: LogoutUseCase
     let getCurrentUserUseCase: GetCurrentUserUseCase
 }
+
 struct CommentUseCases {
     let fetchCommentsUseCase: FetchCommentsUseCase
     let createCommentUseCase: CreateCommentUseCase

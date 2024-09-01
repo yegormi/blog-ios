@@ -12,6 +12,6 @@ public class RegisterUseCaseImpl: RegisterUseCase {
     }
 
     public func execute(username: String, email: String, password: String) async throws -> User {
-        return try await self.userRepository.register(username: username, email: email, password: password)
+        try await self.userRepository.register(username: username, email: email, password: password)
     }
 }

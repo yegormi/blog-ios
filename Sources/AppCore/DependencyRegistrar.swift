@@ -115,14 +115,14 @@ public struct DependencyRegistrar {
             logoutUseCase: useCases.authUseCases.logoutUseCase,
             getCurrentUserUseCase: useCases.authUseCases.getCurrentUserUseCase
         )
-//        let commentViewModel = CommentViewModel(
-//            fetchCommentsUseCase: useCases.commentUseCases.fetchCommentsUseCase,
-//            createCommentUseCase: useCases.commentUseCases.createCommentUseCase,
-//            deleteCommentUseCase: useCases.commentUseCases.deleteCommentUseCase
-//        )
+        let articleDetailViewModelFactory = DefaultArticleDetailViewModelFactory(
+            fetchCommentsUseCase: useCases.commentUseCases.fetchCommentsUseCase,
+            createCommentUseCase: useCases.commentUseCases.createCommentUseCase,
+            deleteCommentUseCase: useCases.commentUseCases.deleteCommentUseCase
+        )
 
         self.container.register(articleListViewModel)
         self.container.register(authViewModel)
-//        self.container.register(commentViewModel)
+        self.container.register(articleDetailViewModelFactory as ArticleDetailViewModelFactory)
     }
 }

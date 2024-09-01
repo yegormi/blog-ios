@@ -12,6 +12,6 @@ public class FetchArticlesUseCaseImpl: FetchArticlesUseCase {
     }
 
     public func execute() async throws -> [Article] {
-        return try await self.articleRepository.getArticles()
+        try await self.articleRepository.getArticles()
     }
 }

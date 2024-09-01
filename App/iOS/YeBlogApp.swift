@@ -6,7 +6,7 @@ struct YeBlogApp: App {
     let appCore: AppCore
 
     init() {
-        let baseURL = URL(string: "https://5cj816p8-8080.euw.devtunnels.ms/")!
+        let baseURL = URL(string: "http://127.0.0.1:8080")!
         self.appCore = AppCore(baseURL: baseURL)
     }
 

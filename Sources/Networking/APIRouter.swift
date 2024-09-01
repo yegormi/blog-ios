@@ -71,5 +71,5 @@ public enum APIRouter: URLRequestConvertible {
         return request
     }
 
-    private static let baseURL = "https://5cj816p8-8080.euw.devtunnels.ms"
+    private static let baseURL = "http://127.0.0.1:8080"
 }

@@ -12,6 +12,6 @@ public class LoginUseCaseImpl: LoginUseCase {
     }
 
     public func execute(email: String, password: String) async throws -> User {
-        return try await self.userRepository.login(email: email, password: password)
+        try await self.userRepository.login(email: email, password: password)
     }
 }

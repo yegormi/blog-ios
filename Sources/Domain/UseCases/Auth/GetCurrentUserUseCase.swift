@@ -12,6 +12,6 @@ public class GetCurrentUserUseCaseImpl: GetCurrentUserUseCase {
     }
 
     public func execute() async throws -> User? {
-        return try await self.userRepository.getCurrentUser()
+        try await self.userRepository.getCurrentUser()
     }
 }

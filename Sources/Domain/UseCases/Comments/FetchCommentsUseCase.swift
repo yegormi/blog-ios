@@ -12,6 +12,6 @@ public class FetchCommentsUseCaseImpl: FetchCommentsUseCase {
     }
 
     public func execute(articleId: UUID) async throws -> [Comment] {
-        return try await self.commentRepository.getComments(for: articleId)
+        try await self.commentRepository.getComments(for: articleId)
     }
 }

@@ -17,22 +17,46 @@ public struct AppCore {
     }
 
     public func makeRootView() -> some View {
-        AppView()
-            .environmentObject(self.container.resolve() as ArticleListViewModel)
-            .environmentObject(self.container.resolve() as AuthViewModel)
+        let authViewModel: AuthViewModel = self.container.resolve()
+        let articleListViewModel: ArticleListViewModel = self.container.resolve()
+        let articleDetailViewModelFactory: ArticleDetailViewModelFactory = self.container.resolve()
+
+        return AppView(
+            authViewModel: authViewModel,
+            articleListViewModel: articleListViewModel,
+            articleDetailViewModelFactory: articleDetailViewModelFactory
+        )
+        .environmentObject(self.container.resolve() as ArticleListViewModel)
+        .environmentObject(self.container.resolve() as AuthViewModel)
     }
 }
 
 public struct AppView: View {
-    @EnvironmentObject var authViewModel: AuthViewModel
+    @StateObject var authViewModel: AuthViewModel
+    @StateObject var articleListViewModel: ArticleListViewModel
+    let articleDetailViewModelFactory: ArticleDetailViewModelFactory
 
-    public init() {}
+    public init(
+        authViewModel: AuthViewModel,
+        articleListViewModel: ArticleListViewModel,
+        articleDetailViewModelFactory: ArticleDetailViewModelFactory
+    ) {
+        self._authViewModel = StateObject(wrappedValue: authViewModel)
+        self._articleListViewModel = StateObject(wrappedValue: articleListViewModel)
+        self.articleDetailViewModelFactory = articleDetailViewModelFactory
+    }
 
     public var body: some View {
         if self.authViewModel.isLoggedIn {
-            ArticleListView()
+            NavigationView {
+                ArticleListView(
+                    viewModel: self.articleListViewModel
+                ) { article in
+                    self.articleDetailViewModelFactory.makeViewModel(for: article)
+                }
+            }
         } else {
-            LoginView()
+            LoginView(viewModel: self.authViewModel)
         }
     }
 }
