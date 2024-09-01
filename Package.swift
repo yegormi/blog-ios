@@ -5,19 +5,44 @@ import PackageDescription
 
 let package = Package(
     name: "blog-ios",
+    platforms: [.iOS(.v17)],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "blog-ios",
-            targets: ["blog-ios"]),
+        .library(name: "AppCore", targets: ["AppCore"]),
+        .library(name: "Data", targets: ["Data"]),
+        .library(name: "Domain", targets: ["Domain"]),
+        .library(name: "Networking", targets: ["Networking"]),
+        .library(name: "Presentation", targets: ["Presentation"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.9.1")),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "blog-ios"),
-        .testTarget(
-            name: "blog-iosTests",
-            dependencies: ["blog-ios"]),
+            name: "AppCore",
+            dependencies: [
+                "Data",
+                "Domain",
+                "Networking",
+                "Presentation",
+            ]
+        ),
+        .target(
+            name: "Domain",
+            dependencies: []
+        ),
+        .target(
+            name: "Presentation",
+            dependencies: ["Domain"]
+        ),
+        .target(
+            name: "Data",
+            dependencies: ["Domain", "Networking"]
+        ),
+        .target(
+            name: "Networking",
+            dependencies: [
+                .product(name: "Alamofire", package: "Alamofire"),
+            ]
+        ),
     ]
 )
