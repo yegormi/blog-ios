@@ -2,19 +2,19 @@ import Data
 import Domain
 import Foundation
 
-private struct DataSources {
+internal struct DataSources {
     let articleDataSource: ArticleRemoteDataSource
     let userDataSource: UserRemoteDataSource
     let commentDataSource: CommentRemoteDataSource
 }
 
-private struct Repositories {
+internal struct Repositories {
     let articleRepository: ArticleRepository
     let userRepository: UserRepository
     let commentRepository: CommentRepository
 }
 
-private struct UseCases {
+internal struct UseCases {
     let articleUseCases: ArticleUseCases
     let authUseCases: AuthUseCases
     let commentUseCases: CommentUseCases
