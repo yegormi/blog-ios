@@ -9,13 +9,32 @@ struct DataSources {
 }
 
 struct Repositories {
-    let articleRepository: ArticleRepository
-    let userRepository: UserRepository
-    let commentRepository: CommentRepository
+    let articleRepository: ArticleRepositoryProtocol
+    let userRepository: UserRepositoryProtocol
+    let commentRepository: CommentRepositoryProtocol
 }
 
 struct UseCases {
     let articleUseCases: ArticleUseCases
     let authUseCases: AuthUseCases
     let commentUseCases: CommentUseCases
+}
+
+struct ArticleUseCases {
+    let fetchArticlesUseCase: FetchArticlesUseCase
+    let getArticleUseCase: GetArticleUseCase
+    let createArticleUseCase: CreateArticleUseCase
+    let updateArticleUseCase: UpdateArticleUseCase
+    let deleteArticleUseCase: DeleteArticleUseCase
+}
+struct AuthUseCases {
+    let loginUseCase: LoginUseCase
+    let registerUseCase: RegisterUseCase
+    let logoutUseCase: LogoutUseCase
+    let getCurrentUserUseCase: GetCurrentUserUseCase
+}
+struct CommentUseCases {
+    let fetchCommentsUseCase: FetchCommentsUseCase
+    let createCommentUseCase: CreateCommentUseCase
+    let deleteCommentUseCase: DeleteCommentUseCase
 }

@@ -8,16 +8,27 @@ public class AuthViewModel: ObservableObject {
     @Published public var showError = false
     @Published public var errorMessage = ""
 
-    private let authUseCase: AuthUseCases
+    private let loginUseCase: LoginUseCase
+    private let registerUseCase: RegisterUseCase
+    private let logoutUseCase: LogoutUseCase
+    private let getCurrentUserUseCase: GetCurrentUserUseCase
 
-    public init(authUseCase: AuthUseCases) {
-        self.authUseCase = authUseCase
+    public init(
+        loginUseCase: LoginUseCase,
+        registerUseCase: RegisterUseCase,
+        logoutUseCase: LogoutUseCase,
+        getCurrentUserUseCase: GetCurrentUserUseCase
+    ) {
+        self.loginUseCase = loginUseCase
+        self.registerUseCase = registerUseCase
+        self.logoutUseCase = logoutUseCase
+        self.getCurrentUserUseCase = getCurrentUserUseCase
         Task { await self.checkCurrentUser() }
     }
 
     public func checkCurrentUser() async {
         do {
-            let user = try await authUseCase.getCurrentUser()
+            let user = try await self.getCurrentUserUseCase.execute()
             self.currentUser = user
             self.isLoggedIn = user != nil
         } catch {
@@ -27,7 +38,7 @@ public class AuthViewModel: ObservableObject {
 
     public func login(email: String, password: String) async {
         do {
-            let user = try await authUseCase.login(email: email, password: password)
+            let user = try await self.loginUseCase.execute(email: email, password: password)
             self.currentUser = user
             self.isLoggedIn = true
         } catch {
@@ -38,7 +49,7 @@ public class AuthViewModel: ObservableObject {
 
     public func logout() async {
         do {
-            try await self.authUseCase.logout()
+            try await self.logoutUseCase.execute()
             self.currentUser = nil
             self.isLoggedIn = false
         } catch {
@@ -49,7 +60,7 @@ public class AuthViewModel: ObservableObject {
 
     public func register(username: String, email: String, password: String) async {
         do {
-            let user = try await authUseCase.register(username: username, email: email, password: password)
+            let user = try await registerUseCase.execute(username: username, email: email, password: password)
             self.currentUser = user
             self.isLoggedIn = true
         } catch {

@@ -54,9 +54,44 @@ public struct DependencyRegistrar {
     }
 
     private func registerUseCases(repositories: Repositories) -> UseCases {
-        let articleUseCases = repositories.articleRepository as ArticleUseCases
-        let authUseCases = repositories.userRepository as AuthUseCases
-        let commentUseCases = repositories.commentRepository as CommentUseCases
+        // Article Use Cases
+        let fetchArticlesUseCase = FetchArticlesUseCaseImpl(articleRepository: repositories.articleRepository)
+        let getArticleUseCase = GetArticleUseCaseImpl(articleRepository: repositories.articleRepository)
+        let createArticleUseCase = CreateArticleUseCaseImpl(articleRepository: repositories.articleRepository)
+        let updateArticleUseCase = UpdateArticleUseCaseImpl(articleRepository: repositories.articleRepository)
+        let deleteArticleUseCase = DeleteArticleUseCaseImpl(articleRepository: repositories.articleRepository)
+
+        let articleUseCases = ArticleUseCases(
+            fetchArticlesUseCase: fetchArticlesUseCase,
+            getArticleUseCase: getArticleUseCase,
+            createArticleUseCase: createArticleUseCase,
+            updateArticleUseCase: updateArticleUseCase,
+            deleteArticleUseCase: deleteArticleUseCase
+        )
+
+        // Auth Use Cases
+        let loginUseCase = LoginUseCaseImpl(userRepository: repositories.userRepository)
+        let registerUseCase = RegisterUseCaseImpl(userRepository: repositories.userRepository)
+        let logoutUseCase = LogoutUseCaseImpl(userRepository: repositories.userRepository)
+        let getCurrentUserUseCase = GetCurrentUserUseCaseImpl(userRepository: repositories.userRepository)
+
+        let authUseCases = AuthUseCases(
+            loginUseCase: loginUseCase,
+            registerUseCase: registerUseCase,
+            logoutUseCase: logoutUseCase,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
+
+        // Comment Use Cases
+        let fetchCommentsUseCase = FetchCommentsUseCaseImpl(commentRepository: repositories.commentRepository)
+        let createCommentUseCase = CreateCommentUseCaseImpl(commentRepository: repositories.commentRepository)
+        let deleteCommentUseCase = DeleteCommentUseCaseImpl(commentRepository: repositories.commentRepository)
+
+        let commentUseCases = CommentUseCases(
+            fetchCommentsUseCase: fetchCommentsUseCase,
+            createCommentUseCase: createCommentUseCase,
+            deleteCommentUseCase: deleteCommentUseCase
+        )
 
         self.container.register(articleUseCases)
         self.container.register(authUseCases)
@@ -71,10 +106,23 @@ public struct DependencyRegistrar {
 
     @MainActor
     private func registerViewModels(useCases: UseCases) {
-        let articleListViewModel = ArticleListViewModel(articleUseCase: useCases.articleUseCases)
-        let authViewModel = AuthViewModel(authUseCase: useCases.authUseCases)
+        let articleListViewModel = ArticleListViewModel(
+            fetchArticlesUseCase: useCases.articleUseCases.fetchArticlesUseCase
+        )
+        let authViewModel = AuthViewModel(
+            loginUseCase: useCases.authUseCases.loginUseCase,
+            registerUseCase: useCases.authUseCases.registerUseCase,
+            logoutUseCase: useCases.authUseCases.logoutUseCase,
+            getCurrentUserUseCase: useCases.authUseCases.getCurrentUserUseCase
+        )
+//        let commentViewModel = CommentViewModel(
+//            fetchCommentsUseCase: useCases.commentUseCases.fetchCommentsUseCase,
+//            createCommentUseCase: useCases.commentUseCases.createCommentUseCase,
+//            deleteCommentUseCase: useCases.commentUseCases.deleteCommentUseCase
+//        )
 
         self.container.register(articleListViewModel)
         self.container.register(authViewModel)
+//        self.container.register(commentViewModel)
     }
 }
