@@ -1,5 +1,5 @@
-import SwiftUI
 import AppCore
+import SwiftUI
 
 @main
 struct YeBlogApp: App {
@@ -12,7 +12,7 @@ struct YeBlogApp: App {
 
     var body: some Scene {
         WindowGroup {
-            appCore.makeRootView()
+            self.appCore.makeRootView()
         }
     }
 }

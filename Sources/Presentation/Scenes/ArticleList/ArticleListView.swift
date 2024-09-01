@@ -1,5 +1,5 @@
-import SwiftUI
 import Domain
+import SwiftUI
 
 public struct ArticleListView: View {
     @EnvironmentObject var viewModel: ArticleListViewModel
@@ -8,19 +8,19 @@ public struct ArticleListView: View {
 
     public var body: some View {
         NavigationView {
-            List(viewModel.articles) { article in
+            List(self.viewModel.articles) { article in
                 NavigationLink(destination: ArticleDetailView(article: article)) {
                     ArticleRow(article: article)
                 }
             }
             .navigationTitle("Articles")
             .onAppear {
-                viewModel.fetchArticles()
+                Task { await self.viewModel.fetchArticles() }
             }
-            .alert("Error", isPresented: $viewModel.showError) {
+            .alert("Error", isPresented: self.$viewModel.showError) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(viewModel.errorMessage)
+                Text(self.viewModel.errorMessage)
             }
         }
     }

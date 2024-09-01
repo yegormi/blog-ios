@@ -9,27 +9,29 @@ public struct RegisterView: View {
     public var body: some View {
         Form {
             Section(header: Text("Register")) {
-                TextField("Username", text: $username)
-                TextField("Email", text: $email)
+                TextField("Username", text: self.$username)
+                TextField("Email", text: self.$email)
                     .autocapitalization(.none)
                     .keyboardType(.emailAddress)
-                SecureField("Password", text: $password)
+                SecureField("Password", text: self.$password)
             }
 
-            Button(action: register) {
+            Button {
+                Task { await self.register() }
+            } label: {
                 Text("Register")
             }
-            .disabled(username.isEmpty || email.isEmpty || password.isEmpty)
+            .disabled(self.username.isEmpty || self.email.isEmpty || self.password.isEmpty)
         }
         .navigationTitle("Register")
-        .alert("Error", isPresented: $authViewModel.showError) {
+        .alert("Error", isPresented: self.$authViewModel.showError) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text(authViewModel.errorMessage)
+            Text(self.authViewModel.errorMessage)
         }
     }
 
-    private func register() {
-        authViewModel.register(username: username, email: email, password: password)
+    private func register() async {
+        await self.authViewModel.register(username: self.username, email: self.email, password: self.password)
     }
 }

@@ -11,16 +11,16 @@ public struct LoginView: View {
         NavigationView {
             Form {
                 Section(header: Text("Login")) {
-                    TextField("Email", text: $email)
+                    TextField("Email", text: self.$email)
                         .autocapitalization(.none)
                         .keyboardType(.emailAddress)
-                    SecureField("Password", text: $password)
+                    SecureField("Password", text: self.$password)
                 }
 
-                Button(action: login) {
+                Button(action: { Task { await self.login() } }) {
                     Text("Login")
                 }
-                .disabled(email.isEmpty || password.isEmpty)
+                .disabled(self.email.isEmpty || self.password.isEmpty)
 
                 NavigationLink(destination: RegisterView()) {
                     Text("Don't have an account? Register")
@@ -28,14 +28,14 @@ public struct LoginView: View {
             }
             .navigationTitle("Login")
         }
-        .alert("Error", isPresented: $authViewModel.showError) {
+        .alert("Error", isPresented: self.$authViewModel.showError) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text(authViewModel.errorMessage)
+            Text(self.authViewModel.errorMessage)
         }
     }
 
-    private func login() {
-        authViewModel.login(email: email, password: password)
+    private func login() async {
+        await self.authViewModel.login(email: self.email, password: self.password)
     }
 }

@@ -1,5 +1,5 @@
-import Foundation
 import Domain
+import Foundation
 import Networking
 
 public class CommentRemoteDataSource {
@@ -10,14 +10,14 @@ public class CommentRemoteDataSource {
     }
 
     public func getComments(for articleId: UUID) async throws -> [CommentDTO] {
-        return try await apiClient.request(.getComments(articleId: articleId))
+        try await self.apiClient.request(.getComments(articleId: articleId))
     }
 
     public func createComment(content: String, articleId: UUID) async throws -> CommentDTO {
-        return try await apiClient.request(.createComment(content: content, articleId: articleId))
+        try await self.apiClient.request(.createComment(content: content, articleId: articleId))
     }
 
     public func deleteComment(id: UUID) async throws -> EmptyResponse {
-        return try await apiClient.request(.deleteComment(id: id))
+        try await self.apiClient.request(.deleteComment(id: id))
     }
 }

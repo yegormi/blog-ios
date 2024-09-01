@@ -1,5 +1,5 @@
-import Foundation
 import Domain
+import Foundation
 
 public class ArticleDetailViewModel: ObservableObject {
     @Published public var article: Article

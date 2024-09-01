@@ -1,5 +1,5 @@
-import SwiftUI
 import Domain
+import SwiftUI
 
 public struct ArticleDetailView: View {
     @StateObject var viewModel: ArticleDetailViewModel
@@ -11,13 +11,11 @@ public struct ArticleDetailView: View {
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text(viewModel.article.title)
-                    .font(.title)
-                Text(viewModel.article.content)
+                Text(self.viewModel.article.content)
                     .font(.body)
             }
             .padding()
         }
-        .navigationTitle("Article")
+        .navigationTitle(self.viewModel.article.title)
     }
 }

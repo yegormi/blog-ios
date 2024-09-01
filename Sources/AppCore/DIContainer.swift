@@ -11,14 +11,14 @@ public class AppDIContainer: DIContainer {
     public static var shared: AppDIContainer?
 
     public static func initialize(_ container: AppDIContainer) {
-        shared = container
+        self.shared = container
     }
 
     public init() {}
 
     public func register<T>(_ dependency: T) {
         let key = String(describing: T.self)
-        dependencies[key] = dependency
+        self.dependencies[key] = dependency
     }
 
     public func resolve<T>() -> T {

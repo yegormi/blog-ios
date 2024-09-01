@@ -1,26 +1,26 @@
-import Foundation
 import Domain
+import Foundation
 
 // MARK: - ArticleDTO Extensions
 
 extension ArticleDTO {
     func toDomain() -> Article {
-        return Article(
-            id: self.id,
-            title: self.title,
-            content: self.content,
-            userId: self.userId
+        Article(
+            id: id,
+            title: title,
+            content: content,
+            userId: userId
         )
     }
 }
 
 extension Article {
     func toDTO() -> ArticleDTO {
-        return ArticleDTO(
-            id: self.id,
-            title: self.title,
-            content: self.content,
-            userId: self.userId
+        ArticleDTO(
+            id: id,
+            title: title,
+            content: content,
+            userId: userId
         )
     }
 }
@@ -29,22 +29,22 @@ extension Article {
 
 extension UserDTO {
     func toDomain() -> User {
-        return User(
-            id: self.id,
-            username: self.username,
-            email: self.email,
-            avatarUrl: URL(string: self.avatarUrl ?? "")
+        User(
+            id: id,
+            username: username,
+            email: email,
+            avatarUrl: URL(string: avatarUrl ?? "")
         )
     }
 }
 
 extension User {
     func toDTO() -> UserDTO {
-        return UserDTO(
-            id: self.id,
-            username: self.username,
-            email: self.email,
-            avatarUrl: self.avatarUrl?.absoluteString
+        UserDTO(
+            id: id,
+            username: username,
+            email: email,
+            avatarUrl: avatarUrl?.absoluteString
         )
     }
 }
@@ -53,22 +53,22 @@ extension User {
 
 extension CommentDTO {
     func toDomain() -> Comment {
-        return Comment(
-            id: self.id,
-            content: self.content,
-            articleId: self.articleId,
-            userId: self.userId
+        Comment(
+            id: id,
+            content: content,
+            articleId: articleId,
+            userId: userId
         )
     }
 }
 
 extension Comment {
     func toDTO() -> CommentDTO {
-        return CommentDTO(
-            id: self.id,
-            content: self.content,
-            articleId: self.articleId,
-            userId: self.userId
+        CommentDTO(
+            id: id,
+            content: content,
+            articleId: articleId,
+            userId: userId
         )
     }
 }

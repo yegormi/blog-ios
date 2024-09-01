@@ -1,5 +1,5 @@
-import Foundation
 import Domain
+import Foundation
 
 public class ArticleRepository: ArticleUseCases {
     private let remoteDataSource: ArticleRemoteDataSource
@@ -9,31 +9,31 @@ public class ArticleRepository: ArticleUseCases {
     }
 
     public func getArticles() async throws -> [Article] {
-        return try await remoteDataSource
+        try await self.remoteDataSource
             .getArticles()
             .map { $0.toDomain() }
     }
 
     public func getArticle(id: UUID) async throws -> Article {
-        return try await remoteDataSource
+        try await self.remoteDataSource
             .getArticle(id: id)
             .toDomain()
     }
 
     public func createArticle(title: String, content: String) async throws -> Article {
-        return try await remoteDataSource
+        try await self.remoteDataSource
             .createArticle(title: title, content: content)
             .toDomain()
     }
 
     public func updateArticle(id: UUID, title: String, content: String) async throws -> Article {
-        return try await remoteDataSource
+        try await self.remoteDataSource
             .updateArticle(id: id, title: title, content: content)
             .toDomain()
     }
 
     public func deleteArticle(id: UUID) async throws {
-        _ = try await remoteDataSource
+        _ = try await self.remoteDataSource
             .deleteArticle(id: id)
     }
 }

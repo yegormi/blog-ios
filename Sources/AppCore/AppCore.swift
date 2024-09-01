@@ -1,9 +1,10 @@
-import SwiftUI
-import Domain
-import Presentation
 import Data
+import Domain
 import Networking
+import Presentation
+import SwiftUI
 
+@MainActor
 public struct AppCore {
     private let container: DIContainer
 
@@ -17,8 +18,8 @@ public struct AppCore {
 
     public func makeRootView() -> some View {
         AppView()
-            .environmentObject(container.resolve() as ArticleListViewModel)
-            .environmentObject(container.resolve() as AuthViewModel)
+            .environmentObject(self.container.resolve() as ArticleListViewModel)
+            .environmentObject(self.container.resolve() as AuthViewModel)
     }
 }
 
@@ -28,7 +29,7 @@ public struct AppView: View {
     public init() {}
 
     public var body: some View {
-        if authViewModel.isLoggedIn {
+        if self.authViewModel.isLoggedIn {
             ArticleListView()
         } else {
             LoginView()

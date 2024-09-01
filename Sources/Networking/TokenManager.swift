@@ -9,14 +9,14 @@ public final class TokenManager {
     }
 
     public func saveToken(_ token: String) {
-        userDefaults.set(token, forKey: tokenKey)
+        self.userDefaults.set(token, forKey: self.tokenKey)
     }
 
     public func getToken() -> String? {
-        return userDefaults.string(forKey: tokenKey)
+        self.userDefaults.string(forKey: self.tokenKey)
     }
 
     public func deleteToken() {
-        userDefaults.removeObject(forKey: tokenKey)
+        self.userDefaults.removeObject(forKey: self.tokenKey)
     }
 }

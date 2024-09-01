@@ -1,5 +1,5 @@
-import Foundation
 import Alamofire
+import Foundation
 
 public enum APIRouter: URLRequestConvertible {
     case getArticles
@@ -18,51 +18,51 @@ public enum APIRouter: URLRequestConvertible {
     private var method: HTTPMethod {
         switch self {
         case .getArticles, .getArticle, .getComments, .getCurrentUser:
-            return .get
+            .get
         case .createArticle, .login, .register, .createComment:
-            return .post
+            .post
         case .updateArticle:
-            return .put
+            .put
         case .deleteArticle, .logout, .deleteComment:
-            return .delete
+            .delete
         }
     }
 
     private var path: String {
         switch self {
         case .getArticles, .createArticle:
-            return "/articles"
-        case .getArticle(let id), .updateArticle(let id, _, _), .deleteArticle(let id):
-            return "/articles/\(id)"
+            "/articles"
+        case let .getArticle(id), let .updateArticle(id, _, _), let .deleteArticle(id):
+            "/articles/\(id)"
         case .getCurrentUser:
-            return "/auth/me"
+            "/auth/me"
         case .login:
-            return "/auth/login"
+            "/auth/login"
         case .register:
-            return "/auth/register"
+            "/auth/register"
         case .logout:
-            return "/auth/logout"
-        case .getComments(let articleId), .createComment(_, let articleId):
-            return "/articles/\(articleId)/comments"
-        case .deleteComment(let id):
-            return "/comments/\(id)"
+            "/auth/logout"
+        case let .getComments(articleId), let .createComment(_, articleId):
+            "/articles/\(articleId)/comments"
+        case let .deleteComment(id):
+            "/comments/\(id)"
         }
     }
 
     public func asURLRequest() throws -> URLRequest {
-        let url = try APIRouter.baseURL.asURL().appendingPathComponent(path)
+        let url = try APIRouter.baseURL.asURL().appendingPathComponent(self.path)
         var request = URLRequest(url: url)
-        request.method = method
+        request.method = self.method
 
         switch self {
-        case .createArticle(let title, let content),
-             .updateArticle(_, let title, let content):
+        case let .createArticle(title, content),
+             let .updateArticle(_, title, content):
             request.httpBody = try JSONEncoder().encode(["title": title, "content": content])
-        case .login(let email, let password):
+        case let .login(email, password):
             request.httpBody = try JSONEncoder().encode(["email": email, "password": password])
-        case .register(let username, let email, let password):
+        case let .register(username, email, password):
             request.httpBody = try JSONEncoder().encode(["username": username, "email": email, "password": password])
-        case .createComment(let content, _):
+        case let .createComment(content, _):
             request.httpBody = try JSONEncoder().encode(["content": content])
         default:
             break
@@ -71,5 +71,5 @@ public enum APIRouter: URLRequestConvertible {
         return request
     }
 
-    private static let baseURL: String = "https://5cj816p8-8080.euw.devtunnels.ms"
+    private static let baseURL = "https://5cj816p8-8080.euw.devtunnels.ms"
 }

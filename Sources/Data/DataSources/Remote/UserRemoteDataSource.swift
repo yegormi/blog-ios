@@ -1,5 +1,5 @@
-import Foundation
 import Domain
+import Foundation
 import Networking
 
 public class UserRemoteDataSource {
@@ -13,23 +13,23 @@ public class UserRemoteDataSource {
 
     public func login(email: String, password: String) async throws -> UserResponse {
         let response: UserResponse = try await apiClient.request(.login(email: email, password: password))
-        tokenManager.saveToken(response.token)
+        self.tokenManager.saveToken(response.token)
         return response
     }
 
     public func register(username: String, email: String, password: String) async throws -> UserResponse {
         let response: UserResponse = try await apiClient.request(.register(username: username, email: email, password: password))
-        tokenManager.saveToken(response.token)
+        self.tokenManager.saveToken(response.token)
         return response
     }
 
     public func logout() async throws -> EmptyResponse {
         let response: EmptyResponse = try await apiClient.request(.logout)
-        tokenManager.deleteToken()
+        self.tokenManager.deleteToken()
         return response
     }
 
     public func getCurrentUser() async throws -> UserDTO? {
-        return try await apiClient.request(.getCurrentUser)
+        try await self.apiClient.request(.getCurrentUser)
     }
 }

@@ -1,5 +1,5 @@
-import Foundation
 import Domain
+import Foundation
 
 public class UserRepository: AuthUseCases {
     private let remoteDataSource: UserRemoteDataSource
@@ -9,25 +9,25 @@ public class UserRepository: AuthUseCases {
     }
 
     public func login(email: String, password: String) async throws -> User {
-        return try await remoteDataSource
+        try await self.remoteDataSource
             .login(email: email, password: password)
             .user
             .toDomain()
     }
 
     public func register(username: String, email: String, password: String) async throws -> User {
-        return try await remoteDataSource
+        try await self.remoteDataSource
             .register(username: username, email: email, password: password)
             .user
             .toDomain()
     }
 
     public func logout() async throws {
-        _ = try await remoteDataSource.logout()
+        _ = try await self.remoteDataSource.logout()
     }
 
     public func getCurrentUser() async throws -> User? {
-        return try await remoteDataSource
+        try await self.remoteDataSource
             .getCurrentUser()?
             .toDomain()
     }

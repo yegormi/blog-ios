@@ -1,5 +1,5 @@
-import Foundation
 import Alamofire
+import Foundation
 import OSLog
 
 private let logger = Logger(subsystem: "APIClient", category: "Networking")
@@ -27,25 +27,25 @@ public class APIClient {
     public func request<T: Decodable>(_ route: APIRouter) async throws -> T {
         var urlRequest = try route.asURLRequest()
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        logFullRequest(urlRequest)
+        self.logFullRequest(urlRequest)
 
         return try await withCheckedThrowingContinuation { continuation in
-            session.request(urlRequest)
+            self.session.request(urlRequest)
                 .validate()
                 .responseData { [weak self] response in
-                    guard let self = self else { return }
+                    guard let self else { return }
 
                     self.logFullResponse(response.response, data: response.data)
 
                     switch response.result {
-                    case .success(let data):
+                    case let .success(data):
                         do {
                             let decodedResponse = try self.decoder.decode(T.self, from: data)
                             continuation.resume(returning: decodedResponse)
                         } catch {
                             continuation.resume(throwing: APIError.invalidResponse)
                         }
-                    case .failure(let error):
+                    case let .failure(error):
                         continuation.resume(throwing: error)
                     }
                 }
@@ -53,7 +53,7 @@ public class APIClient {
     }
 
     private func logFullRequest(_ request: URLRequest) {
-        log(
+        self.log(
             .header("🚀 Outgoing Request"),
             .keyValue("URL", request.url?.absoluteString ?? "N/A"),
             .keyValue("Method", request.httpMethod ?? "N/A"),
@@ -63,11 +63,14 @@ public class APIClient {
     }
 
     private func logFullResponse(_ response: HTTPURLResponse?, data: Data?) {
-        log(
+        self.log(
             .header("📥 Incoming Response"),
             .keyValue("URL", response?.url?.absoluteString ?? "N/A"),
             .keyValue("Status Code", String(response?.statusCode ?? 0)),
-            .group("Headers", items: response?.allHeaderFields.map { .keyValue(String(describing: $0), String(describing: $1)) } ?? []),
+            .group(
+                "Headers",
+                items: response?.allHeaderFields.map { .keyValue(String(describing: $0), String(describing: $1)) } ?? []
+            ),
             .group("Body", items: [.raw(data?.prettyString ?? "None")])
         )
     }
@@ -88,14 +91,14 @@ enum LogItem {
 
     var description: String {
         switch self {
-        case .header(let text):
+        case let .header(text):
             return "\n=== \(text) ===\n"
-        case .keyValue(let key, let value):
+        case let .keyValue(key, value):
             return "\(key): \(value)"
-        case .group(let title, let items):
+        case let .group(title, items):
             let content = items.map(\.description).joined(separator: "\n").indented()
             return "\(title):\n\(content)"
-        case .raw(let text):
+        case let .raw(text):
             return text
         }
     }
@@ -104,7 +107,7 @@ enum LogItem {
 extension String {
     func indented(by spaces: Int = 4) -> String {
         let indent = String(repeating: " ", count: spaces)
-        return self.components(separatedBy: .newlines)
+        return components(separatedBy: .newlines)
             .map { indent + $0 }
             .joined(separator: "\n")
     }
@@ -112,9 +115,11 @@ extension String {
 
 extension Data {
     var prettyString: String {
-        guard let object = try? JSONSerialization.jsonObject(with: self, options: []),
-              let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
-              let prettyString = String(data: data, encoding: .utf8) else {
+        guard
+            let object = try? JSONSerialization.jsonObject(with: self, options: []),
+            let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
+            let prettyString = String(data: data, encoding: .utf8)
+        else {
             return String(data: self, encoding: .utf8) ?? "Unable to parse JSON"
         }
         return prettyString

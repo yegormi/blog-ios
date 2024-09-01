@@ -19,8 +19,8 @@ struct ISO8601DateTranscoder {
 
     func decode(_ dateString: String) throws -> Date {
         guard
-            let date = self.formatterWithFractions.date(from: dateString) ?? self.formatterWithoutFractions
-            .date(from: dateString)
+            let date = formatterWithFractions.date(from: dateString) ?? formatterWithoutFractions
+                .date(from: dateString)
         else {
             throw DecodingError.dataCorrupted(
                 .init(

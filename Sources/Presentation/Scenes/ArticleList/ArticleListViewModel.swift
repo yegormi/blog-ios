@@ -1,6 +1,7 @@
-import Foundation
 import Domain
+import Foundation
 
+@MainActor
 public class ArticleListViewModel: ObservableObject {
     @Published public var articles: [Article] = []
     @Published public var showError = false
@@ -12,19 +13,12 @@ public class ArticleListViewModel: ObservableObject {
         self.articleUseCase = articleUseCase
     }
 
-    public func fetchArticles() {
-        Task {
-            do {
-                let fetchedArticles = try await articleUseCase.getArticles()
-                await MainActor.run {
-                    self.articles = fetchedArticles
-                }
-            } catch {
-                await MainActor.run {
-                    self.errorMessage = error.localizedDescription
-                    self.showError = true
-                }
-            }
+    public func fetchArticles() async {
+        do {
+            self.articles = try await self.articleUseCase.getArticles()
+        } catch {
+            self.errorMessage = error.localizedDescription
+            self.showError = true
         }
     }
 }
