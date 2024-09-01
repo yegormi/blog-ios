@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol AuthUseCases {
+public protocol UserRepositoryProtocol {
     func login(email: String, password: String) async throws -> User
     func register(username: String, email: String, password: String) async throws -> User
     func logout() async throws

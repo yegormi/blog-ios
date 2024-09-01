@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol ArticleUseCases {
+public protocol ArticleRepositoryProtocol {
     func getArticles() async throws -> [Article]
     func getArticle(id: UUID) async throws -> Article
     func createArticle(title: String, content: String) async throws -> Article

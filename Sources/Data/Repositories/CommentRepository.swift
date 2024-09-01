@@ -1,7 +1,7 @@
 import Domain
 import Foundation
 
-public class CommentRepository: CommentUseCases {
+public class CommentRepository: CommentRepositoryProtocol {
     private let remoteDataSource: CommentRemoteDataSource
 
     public init(remoteDataSource: CommentRemoteDataSource) {

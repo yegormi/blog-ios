@@ -1,7 +1,7 @@
 import Domain
 import Foundation
 
-public class ArticleRepository: ArticleUseCases {
+public class ArticleRepository: ArticleRepositoryProtocol {
     private let remoteDataSource: ArticleRemoteDataSource
 
     public init(remoteDataSource: ArticleRemoteDataSource) {
