@@ -5,5 +5,5 @@ public enum RequestPath {
 }
 
 public enum RequestBody {
-    case body(APIRequestModel)
+    case body(APIRequestBody)
 }

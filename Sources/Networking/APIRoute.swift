@@ -1,24 +1,15 @@
 import Alamofire
 import Foundation
 
-public struct APIConfiguration {
-    public static let shared = APIConfiguration()
-    public let baseURL: String
-
-    private init() {
-        self.baseURL = "http://127.0.0.1:8080"
-    }
-}
-
 public struct APIRoute<ResponseType: Decodable>: URLRequestConvertible {
-    private let path: String
     private let method: HTTPMethod
-    private let requestModel: APIRequestModel?
+    private let path: String
+    private let body: APIRequestBody?
 
-    init(path: String, method: HTTPMethod, requestModel: APIRequestModel? = nil) {
-        self.path = path
+    init(method: HTTPMethod, path: String, body: APIRequestBody? = nil) {
         self.method = method
-        self.requestModel = requestModel
+        self.path = path
+        self.body = body
     }
 
     public func asURLRequest() throws -> URLRequest {
@@ -26,8 +17,8 @@ public struct APIRoute<ResponseType: Decodable>: URLRequestConvertible {
         var request = URLRequest(url: url)
         request.method = self.method
 
-        if let model = self.requestModel {
-            request.httpBody = try JSONEncoder().encode(model)
+        if let body = self.body {
+            request.httpBody = try JSONEncoder().encode(body)
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         }
 

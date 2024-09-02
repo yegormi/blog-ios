@@ -4,7 +4,7 @@ import Foundation
 public extension APIRoute {
     static func request<T: Decodable>(_ method: HTTPMethod, _ path: RequestPath, _ body: RequestBody? = nil) -> APIRoute<T> {
         let pathString: String
-        let requestModel: APIRequestModel?
+        let requestBody: APIRequestBody?
 
         switch path {
         case let .path(p):
@@ -13,12 +13,12 @@ public extension APIRoute {
 
         switch body {
         case let .body(b):
-            requestModel = b
+            requestBody = b
         case .none:
-            requestModel = nil
+            requestBody = nil
         }
 
-        return APIRoute<T>(path: pathString, method: method, requestModel: requestModel)
+        return APIRoute<T>(method: method, path: pathString, body: requestBody)
     }
 
     static var getArticles: APIRoute<[ArticleDTO]> {
