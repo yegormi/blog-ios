@@ -6,9 +6,9 @@ public final class UserRemoteDataSource {
     private let apiClient: APIClient
     private let tokenManager: TokenManager
 
-    public init(apiClient: APIClient) {
+    public init(apiClient: APIClient, tokenManager: TokenManager) {
         self.apiClient = apiClient
-        self.tokenManager = TokenManager()
+        self.tokenManager = tokenManager
     }
 
     public func login(email: String, password: String) async throws -> UserResponse {

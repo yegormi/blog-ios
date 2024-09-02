@@ -6,24 +6,28 @@ import Presentation
 
 public struct DependencyRegistrar {
     private let container: DIContainer
-    private let apiClient: APIClient
 
     public init(container: DIContainer) {
         self.container = container
-        self.apiClient = APIClient()
     }
 
     @MainActor
     public func registerDependencies() {
-        let dataSources = self.registerDataSources()
+        let tokenManager = TokenManager()
+        self.container.register(tokenManager)
+
+        let apiClient = APIClient(tokenManager: tokenManager)
+        self.container.register(apiClient)
+
+        let dataSources = self.registerDataSources(apiClient: apiClient, tokenManager: tokenManager)
         let repositories = self.registerRepositories(dataSources: dataSources)
         let useCases = self.registerUseCases(repositories: repositories)
         self.registerViewModels(useCases: useCases)
     }
 
-    private func registerDataSources() -> DataSources {
+    private func registerDataSources(apiClient: APIClient, tokenManager: TokenManager) -> DataSources {
         let articleDataSource = ArticleRemoteDataSource(apiClient: apiClient)
-        let userDataSource = UserRemoteDataSource(apiClient: apiClient)
+        let userDataSource = UserRemoteDataSource(apiClient: apiClient, tokenManager: tokenManager)
         let commentDataSource = CommentRemoteDataSource(apiClient: apiClient)
 
         self.container.register(articleDataSource)
