@@ -12,19 +12,21 @@ public class UserRemoteDataSource {
     }
 
     public func login(email: String, password: String) async throws -> UserResponse {
-        let response: UserResponse = try await apiClient.request(.login(email: email, password: password))
+        let body = LoginRequest(email: email, password: password)
+        let response = try await apiClient.request(.login(body))
         self.tokenManager.saveToken(response.token)
         return response
     }
 
     public func register(username: String, email: String, password: String) async throws -> UserResponse {
-        let response: UserResponse = try await apiClient.request(.register(username: username, email: email, password: password))
+        let body = RegisterRequest(username: username, email: email, password: password)
+        let response = try await apiClient.request(.register(body))
         self.tokenManager.saveToken(response.token)
         return response
     }
 
     public func logout() async throws -> EmptyResponse {
-        let response: EmptyResponse = try await apiClient.request(.logout)
+        let response = try await apiClient.request(.logout)
         self.tokenManager.deleteToken()
         return response
     }

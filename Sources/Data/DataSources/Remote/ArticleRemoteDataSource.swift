@@ -9,22 +9,24 @@ public class ArticleRemoteDataSource {
     }
 
     public func getArticles() async throws -> [ArticleDTO] {
-        try await self.apiClient.request(APIRouter.getArticles)
+        try await self.apiClient.request(.getArticles)
     }
 
     public func getArticle(id: UUID) async throws -> ArticleDTO {
-        try await self.apiClient.request(APIRouter.getArticle(id: id))
+        try await self.apiClient.request(.getArticle(id: id))
     }
 
     public func createArticle(title: String, content: String) async throws -> ArticleDTO {
-        try await self.apiClient.request(APIRouter.createArticle(title: title, content: content))
+        let body = CreateArticleRequest(title: title, content: content)
+        return try await self.apiClient.request(.createArticle(body))
     }
 
     public func updateArticle(id: UUID, title: String, content: String) async throws -> ArticleDTO {
-        try await self.apiClient.request(APIRouter.updateArticle(id: id, title: title, content: content))
+        let body = UpdateArticleRequest(title: title, content: content)
+        return try await self.apiClient.request(.updateArticle(id: id, body: body))
     }
 
     public func deleteArticle(id: UUID) async throws -> EmptyResponse {
-        try await self.apiClient.request(APIRouter.deleteArticle(id: id))
+        try await self.apiClient.request(.deleteArticle(id: id))
     }
 }

@@ -24,13 +24,11 @@ public class APIClient {
         }
     }
 
-    public func request<T: Decodable>(_ route: APIRouter) async throws -> T {
-        var urlRequest = try route.asURLRequest()
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        self.logFullRequest(urlRequest)
+    public func request<T: Decodable>(_ route: APIRoute<T>) async throws -> T {
+        self.logFullRequest(route.urlRequest)
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.session.request(urlRequest)
+            self.session.request(route)
                 .validate()
                 .responseData { [weak self] response in
                     guard let self else { return }
@@ -52,13 +50,13 @@ public class APIClient {
         }
     }
 
-    private func logFullRequest(_ request: URLRequest) {
+    private func logFullRequest(_ request: URLRequest?) {
         self.log(
             .header("🚀 Outgoing Request"),
-            .keyValue("URL", request.url?.absoluteString ?? "N/A"),
-            .keyValue("Method", request.httpMethod ?? "N/A"),
-            .group("Headers", items: request.allHTTPHeaderFields?.map { .keyValue($0, $1) } ?? []),
-            .group("Body", items: [.raw(request.httpBody?.prettyString ?? "None")])
+            .keyValue("URL", request?.url?.absoluteString ?? "N/A"),
+            .keyValue("Method", request?.httpMethod ?? "N/A"),
+            .group("Headers", items: request?.allHTTPHeaderFields?.map { .keyValue($0, $1) } ?? []),
+            .group("Body", items: [.raw(request?.httpBody?.prettyString ?? "None")])
         )
     }
 
@@ -69,7 +67,9 @@ public class APIClient {
             .keyValue("Status Code", String(response?.statusCode ?? 0)),
             .group(
                 "Headers",
-                items: response?.allHeaderFields.map { .keyValue(String(describing: $0), String(describing: $1)) } ?? []
+                items: response?.allHeaderFields.map {
+                    .keyValue(String(describing: $0), String(describing: $1))
+                } ?? []
             ),
             .group("Body", items: [.raw(data?.prettyString ?? "None")])
         )
@@ -78,50 +78,5 @@ public class APIClient {
     private func log(_ items: LogItem...) {
         let message = items.map(\.description).joined(separator: "\n")
         logger.log("\(message)")
-    }
-}
-
-// MARK: - Logging Helpers
-
-enum LogItem {
-    case header(String)
-    case keyValue(String, String)
-    case group(String, items: [LogItem])
-    case raw(String)
-
-    var description: String {
-        switch self {
-        case let .header(text):
-            return "\n=== \(text) ===\n"
-        case let .keyValue(key, value):
-            return "\(key): \(value)"
-        case let .group(title, items):
-            let content = items.map(\.description).joined(separator: "\n").indented()
-            return "\(title):\n\(content)"
-        case let .raw(text):
-            return text
-        }
-    }
-}
-
-extension String {
-    func indented(by spaces: Int = 4) -> String {
-        let indent = String(repeating: " ", count: spaces)
-        return components(separatedBy: .newlines)
-            .map { indent + $0 }
-            .joined(separator: "\n")
-    }
-}
-
-extension Data {
-    var prettyString: String {
-        guard
-            let object = try? JSONSerialization.jsonObject(with: self, options: []),
-            let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
-            let prettyString = String(data: data, encoding: .utf8)
-        else {
-            return String(data: self, encoding: .utf8) ?? "Unable to parse JSON"
-        }
-        return prettyString
     }
 }

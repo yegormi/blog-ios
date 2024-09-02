@@ -1,5 +1,6 @@
 import Domain
 import Foundation
+import Networking
 
 // MARK: - ArticleDTO Extensions
 
