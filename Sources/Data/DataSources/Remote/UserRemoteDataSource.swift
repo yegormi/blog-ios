@@ -34,4 +34,12 @@ public class UserRemoteDataSource {
     public func getCurrentUser() async throws -> UserDTO? {
         try await self.apiClient.request(.getCurrentUser)
     }
+
+    public func uploadAvatar(imageData: Data, fileName: String) async throws -> UserDTO {
+        try await self.apiClient.request(.uploadAvatar(imageData, fileName: fileName))
+    }
+
+    public func removeAvatar() async throws -> UserDTO {
+        try await self.apiClient.request(.removeAvatar)
+    }
 }

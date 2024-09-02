@@ -26,7 +26,13 @@ public class APIClient {
         self.logFullRequest(route.urlRequest)
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.session.request(route)
+            let request: DataRequest = if let multipartFormData = route.multipartFormData {
+                self.session.upload(multipartFormData: multipartFormData, with: route)
+            } else {
+                self.session.request(route)
+            }
+
+            request
                 .validate()
                 .responseData { [weak self] response in
                     guard let self else { return }

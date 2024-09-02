@@ -31,4 +31,16 @@ public class UserRepository: UserRepositoryProtocol {
             .getCurrentUser()?
             .toDomain()
     }
+
+    public func uploadAvatar(imageData: Data, fileName: String) async throws -> User {
+        try await self.remoteDataSource
+            .uploadAvatar(imageData: imageData, fileName: fileName)
+            .toDomain()
+    }
+
+    public func removeAvatar() async throws -> User {
+        try await self.remoteDataSource
+            .removeAvatar()
+            .toDomain()
+    }
 }

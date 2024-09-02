@@ -68,4 +68,14 @@ public extension APIRoute {
     static func deleteComment(id: UUID) -> APIRoute<EmptyResponse> {
         self.request(.delete, .path("comments/\(id)"))
     }
+
+    static func uploadAvatar(_ image: Data, fileName: String) -> APIRoute<UserDTO> {
+        self.multipartRequest(.post, "auth/me/avatar/upload") { formData in
+            formData.append(image, withName: "file", fileName: fileName, mimeType: "image/jpeg")
+        }
+    }
+
+    static var removeAvatar: APIRoute<UserDTO> {
+        request(.delete, .path("auth/me/avatar/remove"))
+    }
 }

@@ -6,10 +6,18 @@ public struct APIRoute<ResponseType: Decodable>: URLRequestConvertible {
     private let path: String
     private let body: APIRequestBody?
 
-    init(method: HTTPMethod, path: String, body: APIRequestBody? = nil) {
+    let multipartFormData: MultipartFormData?
+
+    init(
+        method: HTTPMethod,
+        path: String,
+        body: APIRequestBody? = nil,
+        multipartFormData: MultipartFormData? = nil
+    ) {
         self.method = method
         self.path = path
         self.body = body
+        self.multipartFormData = multipartFormData
     }
 
     public func asURLRequest() throws -> URLRequest {
@@ -23,6 +31,22 @@ public struct APIRoute<ResponseType: Decodable>: URLRequestConvertible {
             request.headers.add(.contentType("application/json"))
         }
 
+        if let multipartFormData = self.multipartFormData {
+            request.headers.add(.contentType("multipart/form-data"))
+        }
+
         return request
+    }
+}
+
+extension APIRoute {
+    static func multipartRequest<T: Decodable>(
+        _ method: HTTPMethod,
+        _ path: String,
+        multipartFormData: @escaping (MultipartFormData) -> Void
+    ) -> APIRoute<T> {
+        let formData = MultipartFormData()
+        multipartFormData(formData)
+        return APIRoute<T>(method: method, path: path, multipartFormData: formData)
     }
 }
