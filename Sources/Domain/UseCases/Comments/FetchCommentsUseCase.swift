@@ -4,7 +4,7 @@ public protocol FetchCommentsUseCase {
     func execute(articleId: UUID) async throws -> [Comment]
 }
 
-public class FetchCommentsUseCaseImpl: FetchCommentsUseCase {
+public final class FetchCommentsUseCaseImpl: FetchCommentsUseCase {
     private let commentRepository: CommentRepositoryProtocol
 
     public init(commentRepository: CommentRepositoryProtocol) {

@@ -27,11 +27,9 @@ public struct APIRoute<ResponseType: Decodable>: URLRequestConvertible {
         request.headers.add(.accept("application/json"))
 
         if let body = self.body {
-            request.httpBody = try JSONEncoder().encode(body)
             request.headers.add(.contentType("application/json"))
-        }
-
-        if let multipartFormData = self.multipartFormData {
+            request.httpBody = try JSONEncoder().encode(body)
+        } else if let _ = self.multipartFormData {
             request.headers.add(.contentType("multipart/form-data"))
         }
 

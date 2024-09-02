@@ -4,7 +4,7 @@ public protocol RemoveAvatarUseCase {
     func execute() async throws -> User
 }
 
-public class RemoveAvatarUseCaseImpl: RemoveAvatarUseCase {
+public final class RemoveAvatarUseCaseImpl: RemoveAvatarUseCase {
     private let userRepository: UserRepositoryProtocol
 
     public init(userRepository: UserRepositoryProtocol) {

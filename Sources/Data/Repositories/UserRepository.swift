@@ -1,7 +1,7 @@
 import Domain
 import Foundation
 
-public class UserRepository: UserRepositoryProtocol {
+public final class UserRepository: UserRepositoryProtocol {
     private let remoteDataSource: UserRemoteDataSource
 
     public init(remoteDataSource: UserRemoteDataSource) {

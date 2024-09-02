@@ -4,7 +4,7 @@ public protocol UploadAvatarUseCase {
     func execute(imageData: Data, fileName: String) async throws -> User
 }
 
-public class UploadAvatarUseCaseImpl: UploadAvatarUseCase {
+public final class UploadAvatarUseCaseImpl: UploadAvatarUseCase {
     private let userRepository: UserRepositoryProtocol
 
     public init(userRepository: UserRepositoryProtocol) {

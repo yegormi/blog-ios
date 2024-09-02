@@ -2,7 +2,7 @@ import Domain
 import Foundation
 import Networking
 
-public class UserRemoteDataSource {
+public final class UserRemoteDataSource {
     private let apiClient: APIClient
     private let tokenManager: TokenManager
 

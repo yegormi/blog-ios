@@ -4,7 +4,7 @@ public protocol FetchArticlesUseCase {
     func execute() async throws -> [Article]
 }
 
-public class FetchArticlesUseCaseImpl: FetchArticlesUseCase {
+public final class FetchArticlesUseCaseImpl: FetchArticlesUseCase {
     private let articleRepository: ArticleRepositoryProtocol
 
     public init(articleRepository: ArticleRepositoryProtocol) {

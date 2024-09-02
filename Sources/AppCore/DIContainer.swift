@@ -5,7 +5,7 @@ public protocol DIContainer {
     func resolve<T>() -> T
 }
 
-public class AppDIContainer: DIContainer {
+public final class AppDIContainer: DIContainer {
     private var dependencies: [String: Any] = [:]
 
     public static var shared: AppDIContainer?

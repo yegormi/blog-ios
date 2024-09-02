@@ -4,7 +4,7 @@ public protocol DeleteCommentUseCase {
     func execute(id: UUID) async throws
 }
 
-public class DeleteCommentUseCaseImpl: DeleteCommentUseCase {
+public final class DeleteCommentUseCaseImpl: DeleteCommentUseCase {
     private let commentRepository: CommentRepositoryProtocol
 
     public init(commentRepository: CommentRepositoryProtocol) {

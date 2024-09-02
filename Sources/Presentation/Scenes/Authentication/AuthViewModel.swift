@@ -2,7 +2,7 @@ import Domain
 import Foundation
 
 @MainActor
-public class AuthViewModel: ObservableObject {
+public final class AuthViewModel: ObservableObject {
     @Published public var isLoggedIn = false
     @Published public var currentUser: User?
     @Published public var showError = false

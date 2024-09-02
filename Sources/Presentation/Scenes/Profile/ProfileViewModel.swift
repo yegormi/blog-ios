@@ -3,7 +3,7 @@ import Foundation
 import SwiftUI
 
 @MainActor
-public class ProfileViewModel: ObservableObject {
+public final class ProfileViewModel: ObservableObject {
     @Published public var user: User?
     @Published public var isLoading = false
     @Published public var errorMessage: String?

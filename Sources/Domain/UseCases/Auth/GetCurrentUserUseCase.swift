@@ -4,7 +4,7 @@ public protocol GetCurrentUserUseCase {
     func execute() async throws -> User?
 }
 
-public class GetCurrentUserUseCaseImpl: GetCurrentUserUseCase {
+public final class GetCurrentUserUseCaseImpl: GetCurrentUserUseCase {
     private let userRepository: UserRepositoryProtocol
 
     public init(userRepository: UserRepositoryProtocol) {

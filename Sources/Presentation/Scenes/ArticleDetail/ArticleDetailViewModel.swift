@@ -5,7 +5,7 @@ import OSLog
 private let logger = Logger(subsystem: "ArtileDetail", category: "Presentation")
 
 @MainActor
-public class ArticleDetailViewModel: ObservableObject {
+public final class ArticleDetailViewModel: ObservableObject {
     @Published public var article: Article
     @Published public var comments: [Comment] = []
     @Published public var newCommentContent = ""

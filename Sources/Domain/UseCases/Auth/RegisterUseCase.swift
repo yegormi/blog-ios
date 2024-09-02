@@ -4,7 +4,7 @@ public protocol RegisterUseCase {
     func execute(username: String, email: String, password: String) async throws -> User
 }
 
-public class RegisterUseCaseImpl: RegisterUseCase {
+public final class RegisterUseCaseImpl: RegisterUseCase {
     private let userRepository: UserRepositoryProtocol
 
     public init(userRepository: UserRepositoryProtocol) {

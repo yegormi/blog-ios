@@ -2,7 +2,7 @@ import Domain
 import Foundation
 
 @MainActor
-public class ArticleListViewModel: ObservableObject {
+public final class ArticleListViewModel: ObservableObject {
     @Published public var articles: [Article] = []
     @Published public var showError = false
     @Published public var errorMessage = ""

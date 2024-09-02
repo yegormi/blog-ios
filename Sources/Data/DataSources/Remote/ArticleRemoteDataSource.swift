@@ -1,7 +1,7 @@
 import Foundation
 import Networking
 
-public class ArticleRemoteDataSource {
+public final class ArticleRemoteDataSource {
     private let apiClient: APIClient
 
     public init(apiClient: APIClient) {

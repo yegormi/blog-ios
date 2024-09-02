@@ -4,7 +4,7 @@ public protocol LogoutUseCase {
     func execute() async throws
 }
 
-public class LogoutUseCaseImpl: LogoutUseCase {
+public final class LogoutUseCaseImpl: LogoutUseCase {
     private let userRepository: UserRepositoryProtocol
 
     public init(userRepository: UserRepositoryProtocol) {

@@ -31,4 +31,10 @@ struct ISO8601DateTranscoder {
         }
         return date
     }
+
+    func decode(from decoder: Decoder) throws -> Date {
+        let container = try decoder.singleValueContainer()
+        let dateString = try container.decode(String.self)
+        return try self.decode(dateString)
+    }
 }

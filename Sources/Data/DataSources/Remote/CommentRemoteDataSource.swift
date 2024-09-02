@@ -2,7 +2,7 @@ import Domain
 import Foundation
 import Networking
 
-public class CommentRemoteDataSource {
+public final class CommentRemoteDataSource {
     private let apiClient: APIClient
 
     public init(apiClient: APIClient) {

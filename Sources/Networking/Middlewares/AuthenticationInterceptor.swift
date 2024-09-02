@@ -1,7 +1,7 @@
 import Alamofire
 import Foundation
 
-class AuthenticationInterceptor: RequestInterceptor {
+final class AuthenticationInterceptor: RequestInterceptor {
     private let tokenManager: TokenManager
 
     init(tokenManager: TokenManager) {
@@ -11,7 +11,7 @@ class AuthenticationInterceptor: RequestInterceptor {
     func adapt(_ urlRequest: URLRequest, for _: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var urlRequest = urlRequest
         if let token = tokenManager.getToken() {
-            urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            urlRequest.headers.add(.authorization(bearerToken: token))
         }
         completion(.success(urlRequest))
     }

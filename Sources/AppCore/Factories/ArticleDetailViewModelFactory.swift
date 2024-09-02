@@ -5,7 +5,7 @@ public protocol ArticleDetailViewModelFactory {
     func makeViewModel(for article: Article) -> ArticleDetailViewModel
 }
 
-public class DefaultArticleDetailViewModelFactory: ArticleDetailViewModelFactory {
+public final class DefaultArticleDetailViewModelFactory: ArticleDetailViewModelFactory {
     private let fetchCommentsUseCase: FetchCommentsUseCase
     private let createCommentUseCase: CreateCommentUseCase
     private let deleteCommentUseCase: DeleteCommentUseCase

@@ -4,7 +4,7 @@ public protocol CreateCommentUseCase {
     func execute(content: String, articleId: UUID) async throws -> Comment
 }
 
-public class CreateCommentUseCaseImpl: CreateCommentUseCase {
+public final class CreateCommentUseCaseImpl: CreateCommentUseCase {
     private let commentRepository: CommentRepositoryProtocol
 
     public init(commentRepository: CommentRepositoryProtocol) {

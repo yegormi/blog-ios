@@ -4,7 +4,7 @@ public protocol DeleteArticleUseCase {
     func execute(id: UUID) async throws
 }
 
-public class DeleteArticleUseCaseImpl: DeleteArticleUseCase {
+public final class DeleteArticleUseCaseImpl: DeleteArticleUseCase {
     private let articleRepository: ArticleRepositoryProtocol
 
     public init(articleRepository: ArticleRepositoryProtocol) {

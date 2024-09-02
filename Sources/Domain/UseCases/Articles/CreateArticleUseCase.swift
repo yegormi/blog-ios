@@ -4,7 +4,7 @@ public protocol CreateArticleUseCase {
     func execute(title: String, content: String) async throws -> Article
 }
 
-public class CreateArticleUseCaseImpl: CreateArticleUseCase {
+public final class CreateArticleUseCaseImpl: CreateArticleUseCase {
     private let articleRepository: ArticleRepositoryProtocol
 
     public init(articleRepository: ArticleRepositoryProtocol) {
