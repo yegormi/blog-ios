@@ -2,9 +2,9 @@ import Foundation
 
 public struct APIConfiguration {
     public static let shared = APIConfiguration()
-    public let baseURL: String
+    public let baseURL: URL
 
     private init() {
-        self.baseURL = "http://127.0.0.1:8080"
+        self.baseURL = URL(string: "http://127.0.0.1:8080")!
     }
 }

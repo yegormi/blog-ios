@@ -9,22 +9,22 @@ public enum APIError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .invalidResponse:
-            return NSLocalizedString(
+            NSLocalizedString(
                 "The server returned an invalid response.",
                 comment: "Invalid server response error"
             )
-        case .networkError(let underlyingError):
-            return NSLocalizedString(
+        case let .networkError(underlyingError):
+            NSLocalizedString(
                 "A network error occurred: \(underlyingError.localizedDescription)",
                 comment: "Network error"
             )
-        case .decodingError(let underlyingError):
-            return NSLocalizedString(
+        case let .decodingError(underlyingError):
+            NSLocalizedString(
                 "Failed to process the server response: \(underlyingError.localizedDescription)",
                 comment: "JSON decoding error"
             )
-        case .serverError(let message):
-            return NSLocalizedString(
+        case let .serverError(message):
+            NSLocalizedString(
                 "Server error: \(message)",
                 comment: "Server error with message"
             )
@@ -34,22 +34,22 @@ public enum APIError: LocalizedError {
     public var failureReason: String? {
         switch self {
         case .invalidResponse:
-            return NSLocalizedString(
+            NSLocalizedString(
                 "The server's response was not in the expected format.",
                 comment: "Invalid response failure reason"
             )
         case .networkError:
-            return NSLocalizedString(
+            NSLocalizedString(
                 "There was a problem with the network connection.",
                 comment: "Network error failure reason"
             )
         case .decodingError:
-            return NSLocalizedString(
+            NSLocalizedString(
                 "The app couldn't understand the server's response.",
                 comment: "Decoding error failure reason"
             )
         case .serverError:
-            return NSLocalizedString(
+            NSLocalizedString(
                 "The server encountered an error while processing the request.",
                 comment: "Server error failure reason"
             )
@@ -59,17 +59,17 @@ public enum APIError: LocalizedError {
     public var recoverySuggestion: String? {
         switch self {
         case .invalidResponse, .serverError:
-            return NSLocalizedString(
+            NSLocalizedString(
                 "Please try again later or contact support if the problem persists.",
                 comment: "Recovery suggestion for server errors"
             )
         case .networkError:
-            return NSLocalizedString(
+            NSLocalizedString(
                 "Please check your internet connection and try again.",
                 comment: "Recovery suggestion for network errors"
             )
         case .decodingError:
-            return NSLocalizedString(
+            NSLocalizedString(
                 "Please update the app to the latest version or contact support.",
                 comment: "Recovery suggestion for decoding errors"
             )
@@ -81,11 +81,11 @@ extension APIError {
     static func from(_ error: Error) -> APIError {
         switch error {
         case let apiError as APIError:
-            return apiError
+            apiError
         case is DecodingError:
-            return .decodingError(error)
+            .decodingError(error)
         default:
-            return .networkError(error)
+            .networkError(error)
         }
     }
 }

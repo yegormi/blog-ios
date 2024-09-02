@@ -8,9 +8,9 @@ import SwiftUI
 public struct AppCore {
     private let container: DIContainer
 
-    public init(baseURL: URL) {
+    public init() {
         let container = AppDIContainer()
-        let registrar = DependencyRegistrar(container: container, baseURL: baseURL)
+        let registrar = DependencyRegistrar(container: container, baseURL: APIConfiguration.shared.baseURL)
         registrar.registerDependencies()
         self.container = container
         AppDIContainer.initialize(container)
