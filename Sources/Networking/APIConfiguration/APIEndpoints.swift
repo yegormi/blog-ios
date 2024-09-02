@@ -22,7 +22,7 @@ public extension APIRoute {
     }
 
     static var getArticles: APIRoute<[ArticleDTO]> {
-        request(.get, .path("articles"))
+        self.request(.get, .path("articles"))
     }
 
     static func getArticle(id: UUID) -> APIRoute<ArticleDTO> {
@@ -50,11 +50,11 @@ public extension APIRoute {
     }
 
     static var logout: APIRoute<EmptyResponse> {
-        request(.delete, .path("auth/logout"))
+        self.request(.post, .path("me/logout"))
     }
 
     static var getCurrentUser: APIRoute<UserDTO> {
-        request(.get, .path("me"))
+        self.request(.get, .path("me"))
     }
 
     static func uploadAvatar(_ image: Data, fileName: String) -> APIRoute<UserDTO> {

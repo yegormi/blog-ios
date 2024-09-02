@@ -11,7 +11,7 @@ public final class APIClient {
     public init(tokenManager: TokenManager) {
         let interceptor = AuthenticationInterceptor(tokenManager: tokenManager)
         let logger = LoggingMonitor()
-        
+
         self.session = Session(interceptor: interceptor, eventMonitors: [logger])
         self.decoder = JSONDecoder()
         self.decoder.keyDecodingStrategy = .convertFromSnakeCase

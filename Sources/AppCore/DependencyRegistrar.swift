@@ -131,7 +131,8 @@ public struct DependencyRegistrar {
         let profileViewModel = ProfileViewModel(
             getCurrentUserUseCase: useCases.authUseCases.getCurrentUserUseCase,
             uploadAvatarUseCase: useCases.authUseCases.uploadAvatarUseCase,
-            removeAvatarUseCase: useCases.authUseCases.removeAvatarUseCase
+            removeAvatarUseCase: useCases.authUseCases.removeAvatarUseCase,
+            logoutUseCase: useCases.authUseCases.logoutUseCase
         )
 
         self.container.register(articleListViewModel)

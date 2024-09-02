@@ -4,6 +4,7 @@ public struct ProfileView: View {
     @ObservedObject var viewModel: ProfileViewModel
     @State private var showingImagePicker = false
     @State private var inputImage: UIImage?
+    @State private var showingLogoutAlert = false
 
     public init(viewModel: ProfileViewModel) {
         self.viewModel = viewModel
@@ -68,6 +69,13 @@ public struct ProfileView: View {
                     }
                 }
             }
+
+            Section {
+                Button("Logout") {
+                    self.showingLogoutAlert = true
+                }
+                .foregroundColor(.red)
+            }
         }
         .navigationTitle("Profile")
         .onAppear {
@@ -91,6 +99,24 @@ public struct ProfileView: View {
         } message: {
             Text(self.viewModel.errorMessage ?? "")
         }
+        .alert("Logout", isPresented: self.$showingLogoutAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Logout", role: .destructive) {
+                Task {
+                    await self.viewModel.logout()
+                }
+            }
+        } message: {
+            Text("Are you sure you want to logout?")
+        }
+        .overlay(Group {
+            if self.viewModel.isLoading {
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.black.opacity(0.2))
+            }
+        })
     }
 }
 

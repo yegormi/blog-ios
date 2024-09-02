@@ -11,15 +11,18 @@ public final class ProfileViewModel: ObservableObject {
     private let getCurrentUserUseCase: GetCurrentUserUseCase
     private let uploadAvatarUseCase: UploadAvatarUseCase
     private let removeAvatarUseCase: RemoveAvatarUseCase
+    private let logoutUseCase: LogoutUseCase
 
     public init(
         getCurrentUserUseCase: GetCurrentUserUseCase,
         uploadAvatarUseCase: UploadAvatarUseCase,
-        removeAvatarUseCase: RemoveAvatarUseCase
+        removeAvatarUseCase: RemoveAvatarUseCase,
+        logoutUseCase: LogoutUseCase
     ) {
         self.getCurrentUserUseCase = getCurrentUserUseCase
         self.uploadAvatarUseCase = uploadAvatarUseCase
         self.removeAvatarUseCase = removeAvatarUseCase
+        self.logoutUseCase = logoutUseCase
     }
 
     public func fetchProfile() async {
@@ -59,6 +62,18 @@ public final class ProfileViewModel: ObservableObject {
             self.isLoading = false
         } catch {
             self.errorMessage = "Failed to remove avatar: \(error.localizedDescription)"
+            self.isLoading = false
+        }
+    }
+
+    public func logout() async {
+        self.isLoading = true
+        do {
+            try await self.logoutUseCase.execute()
+            self.user = nil
+            self.isLoading = false
+        } catch {
+            self.errorMessage = "Failed to logout: \(error.localizedDescription)"
             self.isLoading = false
         }
     }
