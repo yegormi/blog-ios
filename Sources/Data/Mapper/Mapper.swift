@@ -54,22 +54,12 @@ extension User {
 
 extension CommentDTO {
     func toDomain() -> Comment {
-        Comment(
-            id: id,
-            content: content,
-            articleId: articleId,
-            userId: userId
-        )
+        Comment(id: self.id, content: self.content, user: self.user.toDomain(), createdAt: self.createdAt)
     }
 }
 
 extension Comment {
     func toDTO() -> CommentDTO {
-        CommentDTO(
-            id: id,
-            content: content,
-            articleId: articleId,
-            userId: userId
-        )
+        CommentDTO(id: self.id, content: self.content, user: self.user.toDTO(), createdAt: self.createdAt)
     }
 }

@@ -11,11 +11,11 @@ struct CommentRow: View {
             Text(self.comment.content)
                 .font(.body)
             HStack {
-                Text("By: \(self.comment.userId)")
+                Text("By: \(self.comment.user.username)")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 Spacer()
-                if self.authViewModel.currentUser?.id == self.comment.userId {
+                if self.authViewModel.currentUser?.id == self.comment.user.id {
                     Button(action: self.onDelete) {
                         Image(systemName: "trash")
                             .foregroundColor(.red)
