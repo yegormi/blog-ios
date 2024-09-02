@@ -1,5 +1,8 @@
 import Domain
 import Foundation
+import OSLog
+
+private let logger = Logger(subsystem: "ArtileDetail", category: "Presentation")
 
 @MainActor
 public class ArticleDetailViewModel: ObservableObject {
@@ -31,7 +34,9 @@ public class ArticleDetailViewModel: ObservableObject {
             self.comments = try await self.fetchCommentsUseCase.execute(articleId: self.article.id)
             self.isLoading = false
         } catch {
-            self.errorMessage = "Failed to fetch comments: \(error.localizedDescription)"
+            let error = "Failed to fetch comments: \(error.localizedDescription)"
+            logger.error("\(error)")
+            self.errorMessage = error
             self.isLoading = false
         }
     }
