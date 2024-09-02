@@ -8,9 +8,9 @@ public struct DependencyRegistrar {
     private let container: DIContainer
     private let apiClient: APIClient
 
-    public init(container: DIContainer, baseURL: URL) {
+    public init(container: DIContainer) {
         self.container = container
-        self.apiClient = APIClient(baseURL: baseURL)
+        self.apiClient = APIClient()
     }
 
     @MainActor

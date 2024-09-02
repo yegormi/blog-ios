@@ -5,13 +5,11 @@ import OSLog
 private let logger = Logger(subsystem: "APIClient", category: "Networking")
 
 public class APIClient {
-    private let baseURL: URL
     private let session: Session
     private let decoder: JSONDecoder
     private let tokenManager: TokenManager
 
-    public init(baseURL: URL) {
-        self.baseURL = baseURL
+    public init() {
         self.tokenManager = TokenManager()
         let interceptor = AuthenticationInterceptor(tokenManager: tokenManager)
         self.session = Session(interceptor: interceptor)

@@ -1,6 +1,5 @@
 import Data
 import Domain
-import Networking
 import Presentation
 import SwiftUI
 
@@ -10,7 +9,7 @@ public struct AppCore {
 
     public init() {
         let container = AppDIContainer()
-        let registrar = DependencyRegistrar(container: container, baseURL: APIConfiguration.shared.baseURL)
+        let registrar = DependencyRegistrar(container: container)
         registrar.registerDependencies()
         self.container = container
         AppDIContainer.initialize(container)

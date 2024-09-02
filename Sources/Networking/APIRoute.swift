@@ -16,10 +16,11 @@ public struct APIRoute<ResponseType: Decodable>: URLRequestConvertible {
         let url = try APIConfiguration.shared.baseURL.asURL().appendingPathComponent(self.path)
         var request = URLRequest(url: url)
         request.method = self.method
+        request.headers.add(.accept("application/json"))
 
         if let body = self.body {
             request.httpBody = try JSONEncoder().encode(body)
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.headers.add(.contentType("application/json"))
         }
 
         return request
