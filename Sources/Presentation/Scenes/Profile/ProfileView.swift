@@ -114,7 +114,7 @@ public struct ProfileView: View {
                 ProgressView()
                     .scaleEffect(1.5)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.black.opacity(0.2))
+                    .background(Color.black.opacity(0.4))
             }
         })
     }

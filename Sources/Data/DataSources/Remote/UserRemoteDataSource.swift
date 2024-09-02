@@ -25,10 +25,9 @@ public final class UserRemoteDataSource {
         return response
     }
 
-    public func logout() async throws -> EmptyResponse {
-        let response = try await apiClient.request(.logout)
+    public func logout() async throws {
+        _ = try await self.apiClient.request(.logout)
         self.tokenManager.deleteToken()
-        return response
     }
 
     public func getCurrentUser() async throws -> UserDTO? {

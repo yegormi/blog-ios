@@ -26,7 +26,7 @@ public final class ArticleRemoteDataSource {
         return try await self.apiClient.request(.updateArticle(id: id, body: body))
     }
 
-    public func deleteArticle(id: UUID) async throws -> EmptyResponse {
-        try await self.apiClient.request(.deleteArticle(id: id))
+    public func deleteArticle(id: UUID) async throws {
+        _ = try await self.apiClient.request(.deleteArticle(id: id))
     }
 }

@@ -37,7 +37,7 @@ public extension APIRoute {
         self.request(.put, .path("articles/\(id)"), .body(body))
     }
 
-    static func deleteArticle(id: UUID) -> APIRoute<EmptyResponse> {
+    static func deleteArticle(id: UUID) -> APIRoute<Empty> {
         self.request(.delete, .path("articles/\(id)"))
     }
 
@@ -49,7 +49,7 @@ public extension APIRoute {
         self.request(.post, .path("auth/register"), .body(body))
     }
 
-    static var logout: APIRoute<EmptyResponse> {
+    static var logout: APIRoute<Empty> {
         self.request(.post, .path("me/logout"))
     }
 
@@ -75,7 +75,7 @@ public extension APIRoute {
         self.request(.post, .path("articles/\(articleId)/comments"), .body(body))
     }
 
-    static func deleteComment(id: UUID) -> APIRoute<EmptyResponse> {
+    static func deleteComment(id: UUID) -> APIRoute<Empty> {
         self.request(.delete, .path("comments/\(id)"))
     }
 }

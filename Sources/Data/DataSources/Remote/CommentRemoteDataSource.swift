@@ -18,7 +18,7 @@ public final class CommentRemoteDataSource {
         return try await self.apiClient.request(.createComment(articleId: articleId, body: request))
     }
 
-    public func deleteComment(id: UUID) async throws -> EmptyResponse {
-        try await self.apiClient.request(.deleteComment(id: id))
+    public func deleteComment(id: UUID) async throws {
+        _ = try await self.apiClient.request(.deleteComment(id: id))
     }
 }

@@ -28,17 +28,10 @@ public final class APIClient {
 
             request
                 .validate()
-                .responseData { [weak self] response in
-                    guard let self else { return }
-
+                .responseDecodable(of: T.self, emptyResponseCodes: [204, 205]) { response in
                     switch response.result {
-                    case let .success(data):
-                        do {
-                            let decodedResponse = try self.decoder.decode(T.self, from: data)
-                            continuation.resume(returning: decodedResponse)
-                        } catch {
-                            continuation.resume(throwing: APIError.invalidResponse)
-                        }
+                    case let .success(value):
+                        continuation.resume(returning: value)
                     case let .failure(error):
                         continuation.resume(throwing: error)
                     }

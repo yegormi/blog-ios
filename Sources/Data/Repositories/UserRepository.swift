@@ -23,7 +23,7 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func logout() async throws {
-        _ = try await self.remoteDataSource.logout()
+        try await self.remoteDataSource.logout()
     }
 
     public func getCurrentUser() async throws -> User? {

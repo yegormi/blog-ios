@@ -116,7 +116,11 @@ struct AuthView: View {
                 }
                 .disabled(self.email.isEmpty || self.password.isEmpty || (!self.isShowingLogin && self.username.isEmpty))
 
-                Button(action: { self.isShowingLogin.toggle() }) {
+                Button {
+                    withAnimation {
+                        self.isShowingLogin.toggle()
+                    }
+                } label: {
                     Text(self.isShowingLogin ? "Don't have an account? Register" : "Already have an account? Login")
                 }
             }
