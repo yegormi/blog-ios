@@ -1,8 +1,7 @@
 import Foundation
-import UIKit
 
 public protocol UploadAvatarUseCase {
-    func execute(image: UIImage, fileName: String) async throws -> User
+    func execute(imageData: Data, fileName: String) async throws -> User
 }
 
 public class UploadAvatarUseCaseImpl: UploadAvatarUseCase {
@@ -12,14 +11,7 @@ public class UploadAvatarUseCaseImpl: UploadAvatarUseCase {
         self.userRepository = userRepository
     }
 
-    public func execute(image: UIImage, fileName: String) async throws -> User {
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-            throw EncodingError.invalidValue(image, EncodingError.Context(
-                codingPath: [],
-                debugDescription: "Failed to convert UIImage to JPEG Data"
-            ))
-        }
-        return try await self.userRepository
-            .uploadAvatar(imageData: imageData, fileName: fileName)
+    public func execute(imageData: Data, fileName: String) async throws -> User {
+        try await self.userRepository.uploadAvatar(imageData: imageData, fileName: fileName)
     }
 }

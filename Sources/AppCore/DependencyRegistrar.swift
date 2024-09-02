@@ -74,12 +74,16 @@ public struct DependencyRegistrar {
         let registerUseCase = RegisterUseCaseImpl(userRepository: repositories.userRepository)
         let logoutUseCase = LogoutUseCaseImpl(userRepository: repositories.userRepository)
         let getCurrentUserUseCase = GetCurrentUserUseCaseImpl(userRepository: repositories.userRepository)
+        let uploadAvatarUseCase = UploadAvatarUseCaseImpl(userRepository: repositories.userRepository)
+        let removeAvatarUseCase = RemoveAvatarUseCaseImpl(userRepository: repositories.userRepository)
 
         let authUseCases = AuthUseCases(
             loginUseCase: loginUseCase,
             registerUseCase: registerUseCase,
             logoutUseCase: logoutUseCase,
-            getCurrentUserUseCase: getCurrentUserUseCase
+            getCurrentUserUseCase: getCurrentUserUseCase,
+            uploadAvatarUseCase: uploadAvatarUseCase,
+            removeAvatarUseCase: removeAvatarUseCase
         )
 
         // Comment Use Cases
@@ -120,9 +124,15 @@ public struct DependencyRegistrar {
             createCommentUseCase: useCases.commentUseCases.createCommentUseCase,
             deleteCommentUseCase: useCases.commentUseCases.deleteCommentUseCase
         )
+        let profileViewModel = ProfileViewModel(
+            getCurrentUserUseCase: useCases.authUseCases.getCurrentUserUseCase,
+            uploadAvatarUseCase: useCases.authUseCases.uploadAvatarUseCase,
+            removeAvatarUseCase: useCases.authUseCases.removeAvatarUseCase
+        )
 
         self.container.register(articleListViewModel)
         self.container.register(authViewModel)
         self.container.register(articleDetailViewModelFactory as ArticleDetailViewModelFactory)
+        self.container.register(profileViewModel)
     }
 }

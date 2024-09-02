@@ -33,6 +33,8 @@ struct AuthUseCases {
     let registerUseCase: RegisterUseCase
     let logoutUseCase: LogoutUseCase
     let getCurrentUserUseCase: GetCurrentUserUseCase
+    let uploadAvatarUseCase: UploadAvatarUseCase
+    let removeAvatarUseCase: RemoveAvatarUseCase
 }
 
 struct CommentUseCases {

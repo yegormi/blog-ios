@@ -49,12 +49,22 @@ public extension APIRoute {
         self.request(.post, .path("auth/register"), .body(body))
     }
 
-    static var getCurrentUser: APIRoute<UserDTO> {
-        request(.get, .path("auth/me"))
-    }
-
     static var logout: APIRoute<EmptyResponse> {
         request(.delete, .path("auth/logout"))
+    }
+
+    static var getCurrentUser: APIRoute<UserDTO> {
+        request(.get, .path("me"))
+    }
+
+    static func uploadAvatar(_ image: Data, fileName: String) -> APIRoute<UserDTO> {
+        self.multipartRequest(.post, "me/avatar/upload") { formData in
+            formData.append(image, withName: "file", fileName: fileName, mimeType: "image/jpeg")
+        }
+    }
+
+    static var removeAvatar: APIRoute<UserDTO> {
+        request(.delete, .path("me/avatar/remove"))
     }
 
     static func getComments(articleId: UUID) -> APIRoute<[CommentDTO]> {
@@ -67,15 +77,5 @@ public extension APIRoute {
 
     static func deleteComment(id: UUID) -> APIRoute<EmptyResponse> {
         self.request(.delete, .path("comments/\(id)"))
-    }
-
-    static func uploadAvatar(_ image: Data, fileName: String) -> APIRoute<UserDTO> {
-        self.multipartRequest(.post, "auth/me/avatar/upload") { formData in
-            formData.append(image, withName: "file", fileName: fileName, mimeType: "image/jpeg")
-        }
-    }
-
-    static var removeAvatar: APIRoute<UserDTO> {
-        request(.delete, .path("auth/me/avatar/remove"))
     }
 }
