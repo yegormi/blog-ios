@@ -4,7 +4,7 @@ import Domain
 import Foundation
 import Networking
 
-public protocol SessionStorageProtocol: SessionProvider {
+public protocol SessionStorageProtocol: SessionInterceptor {
     func authenticate(_ user: User)
     func setCurrentToken(_ token: String) throws
     func getCurrentToken() throws -> String?

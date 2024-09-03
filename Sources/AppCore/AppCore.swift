@@ -1,6 +1,9 @@
 import Foundation
+import OSLog
 import Presentation
 import SwiftUI
+
+private let logger = Logger(subsystem: "AppCore", category: "AppCore")
 
 enum AppScreen: Equatable {
     case splash
@@ -21,19 +24,9 @@ public struct AppCore {
     }
 
     public func makeRootView() -> some View {
-        let authViewModel: AuthViewModel = self.container.resolve()
-        let articleListViewModel: ArticleListViewModel = self.container.resolve()
-        let articleDetailViewModelFactory: ArticleDetailViewModelFactory = self.container.resolve()
-        let profileViewModel: ProfileViewModel = self.container.resolve()
-
-        return AppView(
-            authViewModel: authViewModel,
-            articleListViewModel: articleListViewModel,
-            profileViewModel: profileViewModel,
-            articleDetailViewModelFactory: articleDetailViewModelFactory
-        )
-        .environmentObject(self.container.resolve() as ArticleListViewModel)
-        .environmentObject(self.container.resolve() as AuthViewModel)
+        AppView(container: self.container)
+            .environmentObject(self.container.resolve() as ArticleListViewModel)
+            .environmentObject(self.container.resolve() as AuthViewModel)
     }
 }
 
@@ -42,19 +35,18 @@ public struct AppView: View {
     @StateObject var articleListViewModel: ArticleListViewModel
     @StateObject var profileViewModel: ProfileViewModel
     let articleDetailViewModelFactory: ArticleDetailViewModelFactory
+    let session: SessionUseCases
+    let auth: AuthUseCases
 
     @State private var currentScreen: AppScreen = .splash
 
-    public init(
-        authViewModel: AuthViewModel,
-        articleListViewModel: ArticleListViewModel,
-        profileViewModel: ProfileViewModel,
-        articleDetailViewModelFactory: ArticleDetailViewModelFactory
-    ) {
-        self._authViewModel = StateObject(wrappedValue: authViewModel)
-        self._articleListViewModel = StateObject(wrappedValue: articleListViewModel)
-        self._profileViewModel = StateObject(wrappedValue: profileViewModel)
-        self.articleDetailViewModelFactory = articleDetailViewModelFactory
+    public init(container: DIContainer) {
+        self._authViewModel = StateObject(wrappedValue: container.resolve())
+        self._articleListViewModel = StateObject(wrappedValue: container.resolve())
+        self._profileViewModel = StateObject(wrappedValue: container.resolve())
+        self.articleDetailViewModelFactory = container.resolve()
+        self.session = container.resolve()
+        self.auth = container.resolve()
     }
 
     public var body: some View {
@@ -63,7 +55,33 @@ public struct AppView: View {
             case .splash:
                 SplashView {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        self.currentScreen = self.authViewModel.isLoggedIn ? .loggedIn : .auth
+                        Task {
+                            do {
+                                if let token = try session.getTokenUseCase.execute() {
+                                    logger.info("Found authentication token in keychain, attempting to login...")
+                                    try self.session.setTokenUseCase.execute(token: token)
+                                    let user = try await auth.getCurrentUserUseCase.execute()
+                                    self.session.authenticateUserUseCase.execute(user: user)
+                                    logger.info("Logged in successfully!")
+                                    self.currentScreen = .loggedIn
+                                } else {
+                                    self.currentScreen = .auth
+                                    logger.info("Did not find a stored authentication token, showing auth screen.")
+                                }
+                            } catch {
+                                logger.warning("An error occurred while trying to sign the user in: \(error)")
+                                self.currentScreen = .auth
+                                do {
+                                    try self.session.sessionLogoutUseCase.execute()
+                                } catch {
+                                    logger.warning("An error occurred while trying to sign out the user in: \(error)")
+                                }
+                            }
+
+                            for await user in self.session.observeCurrentUserUseCase.execute() where user == nil {
+                                self.currentScreen = .auth
+                            }
+                        }
                     }
                 }
             case .auth:

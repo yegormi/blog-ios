@@ -1,31 +1,39 @@
 import Alamofire
 import Foundation
 
-public protocol SessionProvider {
+public protocol SessionInterceptor {
     func getCurrentToken() throws -> String?
     func logout() throws
 }
 
-final class AuthenticationInterceptor: RequestInterceptor {
-    private let session: SessionProvider
+public class AuthenticationInterceptor: RequestInterceptor {
+    private let sessionInterceptor: SessionInterceptor
 
-    public init(session: SessionProvider) {
-        self.session = session
+    init(sessionInterceptor: SessionInterceptor) {
+        self.sessionInterceptor = sessionInterceptor
     }
 
-    func adapt(_ urlRequest: URLRequest, for _: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) throws {
+    public func adapt(_ urlRequest: URLRequest, for _: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var urlRequest = urlRequest
-        if let token = try self.session.getCurrentToken() {
-            urlRequest.headers.add(.authorization(bearerToken: token))
+
+        do {
+            if let token = try sessionInterceptor.getCurrentToken() {
+                urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            }
+            completion(.success(urlRequest))
+        } catch {
+            completion(.failure(error))
         }
-        completion(.success(urlRequest))
     }
 
-    func retry(_ request: Request, for _: Session, dueTo _: Error, completion: @escaping (RetryResult) -> Void) throws {
+    public func retry(_ request: Request, for _: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         if let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401 {
-            // Token might be expired, delete it
-            try self.session.logout()
-            completion(.doNotRetry)
+            do {
+                try self.sessionInterceptor.logout()
+                completion(.doNotRetry)
+            } catch {
+                completion(.doNotRetryWithError(error))
+            }
         } else {
             completion(.doNotRetry)
         }

@@ -23,17 +23,6 @@ public final class AuthViewModel: ObservableObject {
         self.registerUseCase = registerUseCase
         self.logoutUseCase = logoutUseCase
         self.getCurrentUserUseCase = getCurrentUserUseCase
-        Task { await self.checkCurrentUser() }
-    }
-
-    public func checkCurrentUser() async {
-        do {
-            let user = try await self.getCurrentUserUseCase.execute()
-            self.currentUser = user
-            self.isLoggedIn = user != nil
-        } catch {
-            print("Error checking current user: \(error)")
-        }
     }
 
     public func login(email: String, password: String) async {

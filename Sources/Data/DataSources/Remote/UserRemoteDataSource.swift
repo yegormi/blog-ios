@@ -33,7 +33,7 @@ public final class UserRemoteDataSource {
         try self.sessionStorage.logout()
     }
 
-    public func getCurrentUser() async throws -> UserDTO? {
+    public func getCurrentUser() async throws -> UserDTO {
         try await self.apiClient.request(.getCurrentUser)
     }
 

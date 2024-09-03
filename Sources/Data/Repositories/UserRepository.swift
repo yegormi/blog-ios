@@ -26,9 +26,9 @@ public final class UserRepository: UserRepositoryProtocol {
         try await self.remoteDataSource.logout()
     }
 
-    public func getCurrentUser() async throws -> User? {
+    public func getCurrentUser() async throws -> User {
         try await self.remoteDataSource
-            .getCurrentUser()?
+            .getCurrentUser()
             .toDomain()
     }
 

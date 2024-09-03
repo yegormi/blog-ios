@@ -1,7 +1,6 @@
 import Domain
 import Foundation
 
-@MainActor
 public final class ArticleListViewModel: ObservableObject {
     @Published public var articles: [Article] = []
     @Published public var showError = false
@@ -13,6 +12,7 @@ public final class ArticleListViewModel: ObservableObject {
         self.fetchArticlesUseCase = fetchArticlesUseCase
     }
 
+    @MainActor
     public func fetchArticles() async {
         do {
             self.articles = try await self.fetchArticlesUseCase.execute()

@@ -13,32 +13,44 @@ public struct DependencyRegistrar {
 
     @MainActor
     public func registerDependencies() {
-        let keychainStorage = KeychainStorage()
-        self.container.register(keychainStorage as KeychainStorageProtocol)
-
-        let sessionStorage = SessionStorage(keychain: keychainStorage)
-        self.container.register(sessionStorage as SessionStorageProtocol)
-
-        let apiClient = APIClient(sessionProvider: sessionStorage)
-        self.container.register(apiClient)
-
-        let dataSources = self.registerDataSources(apiClient: apiClient, sessionStorage: sessionStorage)
+        let storageDependencies = self.registerStorageDependencies()
+        let apiClient = self.registerAPIClient(sessionStorage: storageDependencies.sessionStorage)
+        let dataSources = self.registerDataSources(
+            apiClient: apiClient,
+            sessionStorage: storageDependencies.sessionStorage,
+            keychainStorage: storageDependencies.keychainStorage
+        )
         let repositories = self.registerRepositories(dataSources: dataSources)
         let useCases = self.registerUseCases(repositories: repositories)
-
         self.registerViewModels(useCases: useCases)
     }
 
-    private func registerDataSources(apiClient: APIClient, sessionStorage _: SessionStorageProtocol) -> DataSources {
+    private func registerStorageDependencies()
+        -> (keychainStorage: KeychainStorageProtocol, sessionStorage: SessionStorageProtocol)
+    {
         let keychainStorage = KeychainStorage()
         let sessionStorage = SessionStorage(keychain: keychainStorage)
 
+        self.container.register(keychainStorage as KeychainStorageProtocol)
+        self.container.register(sessionStorage as SessionStorageProtocol)
+
+        return (keychainStorage, sessionStorage)
+    }
+
+    private func registerAPIClient(sessionStorage: SessionStorageProtocol) -> APIClient {
+        let apiClient = APIClient(sessionProvider: sessionStorage)
+        self.container.register(apiClient)
+        return apiClient
+    }
+
+    private func registerDataSources(
+        apiClient: APIClient,
+        sessionStorage: SessionStorageProtocol,
+        keychainStorage: KeychainStorageProtocol
+    ) -> DataSources {
         let articleDataSource = ArticleRemoteDataSource(apiClient: apiClient)
         let userDataSource = UserRemoteDataSource(apiClient: apiClient, sessionStorage: sessionStorage)
         let commentDataSource = CommentRemoteDataSource(apiClient: apiClient)
-
-        self.container.register(keychainStorage as KeychainStorageProtocol)
-        self.container.register(sessionStorage as SessionStorageProtocol)
 
         self.container.register(articleDataSource)
         self.container.register(userDataSource)
@@ -77,65 +89,10 @@ public struct DependencyRegistrar {
     }
 
     private func registerUseCases(repositories: Repositories) -> UseCases {
-        // Article Use Cases
-        let fetchArticlesUseCase = FetchArticlesUseCaseImpl(articleRepository: repositories.articleRepository)
-        let getArticleUseCase = GetArticleUseCaseImpl(articleRepository: repositories.articleRepository)
-        let createArticleUseCase = CreateArticleUseCaseImpl(articleRepository: repositories.articleRepository)
-        let updateArticleUseCase = UpdateArticleUseCaseImpl(articleRepository: repositories.articleRepository)
-        let deleteArticleUseCase = DeleteArticleUseCaseImpl(articleRepository: repositories.articleRepository)
-
-        let articleUseCases = ArticleUseCases(
-            fetchArticlesUseCase: fetchArticlesUseCase,
-            getArticleUseCase: getArticleUseCase,
-            createArticleUseCase: createArticleUseCase,
-            updateArticleUseCase: updateArticleUseCase,
-            deleteArticleUseCase: deleteArticleUseCase
-        )
-
-        // Auth Use Cases
-        let loginUseCase = LoginUseCaseImpl(userRepository: repositories.userRepository)
-        let registerUseCase = RegisterUseCaseImpl(userRepository: repositories.userRepository)
-        let logoutUseCase = LogoutUseCaseImpl(userRepository: repositories.userRepository)
-        let getCurrentUserUseCase = GetCurrentUserUseCaseImpl(userRepository: repositories.userRepository)
-        let uploadAvatarUseCase = UploadAvatarUseCaseImpl(userRepository: repositories.userRepository)
-        let removeAvatarUseCase = RemoveAvatarUseCaseImpl(userRepository: repositories.userRepository)
-
-        let authUseCases = AuthUseCases(
-            loginUseCase: loginUseCase,
-            registerUseCase: registerUseCase,
-            logoutUseCase: logoutUseCase,
-            getCurrentUserUseCase: getCurrentUserUseCase,
-            uploadAvatarUseCase: uploadAvatarUseCase,
-            removeAvatarUseCase: removeAvatarUseCase
-        )
-
-        // Comment Use Cases
-        let fetchCommentsUseCase = FetchCommentsUseCaseImpl(commentRepository: repositories.commentRepository)
-        let createCommentUseCase = CreateCommentUseCaseImpl(commentRepository: repositories.commentRepository)
-        let deleteCommentUseCase = DeleteCommentUseCaseImpl(commentRepository: repositories.commentRepository)
-
-        let commentUseCases = CommentUseCases(
-            fetchCommentsUseCase: fetchCommentsUseCase,
-            createCommentUseCase: createCommentUseCase,
-            deleteCommentUseCase: deleteCommentUseCase
-        )
-
-        // Session Use Cases
-        let authenticateUserUseCase = AuthenticateUserUseCaseImpl(sessionRepository: repositories.sessionRepository)
-        let getSessionUserUseCase = GetSessionUserUseCaseImpl(sessionRepository: repositories.sessionRepository)
-        let getTokenUseCase = GetTokenUseCaseImpl(sessionRepository: repositories.sessionRepository)
-        let observeCurrentUserUseCase = ObserveCurrentUserUseCaseImpl(sessionRepository: repositories.sessionRepository)
-        let sessionLogoutUseCase = SessionLogoutUseCaseImpl(sessionRepository: repositories.sessionRepository)
-        let setTokenUseCase = SetTokenUseCaseImpl(sessionRepository: repositories.sessionRepository)
-
-        let sessionUseCases = SessionUseCases(
-            authenticateUserUseCase: authenticateUserUseCase,
-            getSessionUserUseCase: getSessionUserUseCase,
-            getTokenUseCase: getTokenUseCase,
-            observeCurrentUserUseCase: observeCurrentUserUseCase,
-            sessionLogoutUseCase: sessionLogoutUseCase,
-            setTokenUseCase: setTokenUseCase
-        )
+        let articleUseCases = self.registerArticleUseCases(repository: repositories.articleRepository)
+        let authUseCases = self.registerAuthUseCases(repository: repositories.userRepository)
+        let commentUseCases = self.registerCommentUseCases(repository: repositories.commentRepository)
+        let sessionUseCases = self.registerSessionUseCases(repository: repositories.sessionRepository)
 
         self.container.register(articleUseCases)
         self.container.register(authUseCases)
@@ -147,6 +104,46 @@ public struct DependencyRegistrar {
             authUseCases: authUseCases,
             commentUseCases: commentUseCases,
             sessionUseCases: sessionUseCases
+        )
+    }
+
+    private func registerArticleUseCases(repository: ArticleRepositoryProtocol) -> ArticleUseCases {
+        ArticleUseCases(
+            fetchArticlesUseCase: FetchArticlesUseCaseImpl(articleRepository: repository),
+            getArticleUseCase: GetArticleUseCaseImpl(articleRepository: repository),
+            createArticleUseCase: CreateArticleUseCaseImpl(articleRepository: repository),
+            updateArticleUseCase: UpdateArticleUseCaseImpl(articleRepository: repository),
+            deleteArticleUseCase: DeleteArticleUseCaseImpl(articleRepository: repository)
+        )
+    }
+
+    private func registerAuthUseCases(repository: UserRepositoryProtocol) -> AuthUseCases {
+        AuthUseCases(
+            loginUseCase: LoginUseCaseImpl(userRepository: repository),
+            registerUseCase: RegisterUseCaseImpl(userRepository: repository),
+            logoutUseCase: LogoutUseCaseImpl(userRepository: repository),
+            getCurrentUserUseCase: GetCurrentUserUseCaseImpl(userRepository: repository),
+            uploadAvatarUseCase: UploadAvatarUseCaseImpl(userRepository: repository),
+            removeAvatarUseCase: RemoveAvatarUseCaseImpl(userRepository: repository)
+        )
+    }
+
+    private func registerCommentUseCases(repository: CommentRepositoryProtocol) -> CommentUseCases {
+        CommentUseCases(
+            fetchCommentsUseCase: FetchCommentsUseCaseImpl(commentRepository: repository),
+            createCommentUseCase: CreateCommentUseCaseImpl(commentRepository: repository),
+            deleteCommentUseCase: DeleteCommentUseCaseImpl(commentRepository: repository)
+        )
+    }
+
+    private func registerSessionUseCases(repository: SessionRepositoryProtocol) -> SessionUseCases {
+        SessionUseCases(
+            authenticateUserUseCase: AuthenticateUserUseCaseImpl(sessionRepository: repository),
+            getSessionUserUseCase: GetSessionUserUseCaseImpl(sessionRepository: repository),
+            getTokenUseCase: GetTokenUseCaseImpl(sessionRepository: repository),
+            observeCurrentUserUseCase: ObserveCurrentUserUseCaseImpl(sessionRepository: repository),
+            sessionLogoutUseCase: SessionLogoutUseCaseImpl(sessionRepository: repository),
+            setTokenUseCase: SetTokenUseCaseImpl(sessionRepository: repository)
         )
     }
 

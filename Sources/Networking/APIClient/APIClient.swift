@@ -8,8 +8,8 @@ public final class APIClient {
     private let session: Session
     private let decoder: JSONDecoder
 
-    public init(sessionProvider: SessionProvider) {
-        let interceptor = AuthenticationInterceptor(session: sessionProvider)
+    public init(sessionProvider: SessionInterceptor) {
+        let interceptor = AuthenticationInterceptor(sessionInterceptor: sessionProvider)
         let logger = LoggingMonitor()
 
         self.session = Session(interceptor: interceptor, eventMonitors: [logger])

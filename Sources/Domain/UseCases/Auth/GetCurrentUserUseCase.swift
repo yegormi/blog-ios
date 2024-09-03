@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol GetCurrentUserUseCase {
-    func execute() async throws -> User?
+    func execute() async throws -> User
 }
 
 public final class GetCurrentUserUseCaseImpl: GetCurrentUserUseCase {
@@ -11,7 +11,7 @@ public final class GetCurrentUserUseCaseImpl: GetCurrentUserUseCase {
         self.userRepository = userRepository
     }
 
-    public func execute() async throws -> User? {
+    public func execute() async throws -> User {
         try await self.userRepository.getCurrentUser()
     }
 }
