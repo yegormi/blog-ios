@@ -9,6 +9,7 @@ let package = Package(
     products: [
         .library(name: "AppCore", targets: ["AppCore"]),
         .library(name: "Data", targets: ["Data"]),
+        .library(name: "DIContainer", targets: ["DIContainer"]),
         .library(name: "Domain", targets: ["Domain"]),
         .library(name: "Networking", targets: ["Networking"]),
         .library(name: "Presentation", targets: ["Presentation"]),
@@ -22,10 +23,15 @@ let package = Package(
             name: "AppCore",
             dependencies: [
                 "Data",
+                "DIContainer",
                 "Domain",
                 "Networking",
                 "Presentation",
             ]
+        ),
+        .target(
+            name: "DIContainer",
+            dependencies: []
         ),
         .target(
             name: "Domain",
@@ -33,7 +39,7 @@ let package = Package(
         ),
         .target(
             name: "Presentation",
-            dependencies: ["Domain"]
+            dependencies: ["Domain", "DIContainer"]
         ),
         .target(
             name: "Data",

@@ -4,7 +4,7 @@ public enum APIError: LocalizedError {
     case decodingError(Error)
     case invalidResponse
     case networkError(Error)
-    case serverError(String)
+    case serverError(ServerError)
 
     public var errorDescription: String? {
         switch self {
@@ -23,9 +23,9 @@ public enum APIError: LocalizedError {
                 "Failed to process the server response: \(underlyingError.localizedDescription)",
                 comment: "JSON decoding error"
             )
-        case let .serverError(message):
+        case let .serverError(error):
             NSLocalizedString(
-                "\(message)",
+                "\(error.reason)",
                 comment: "Server error with message reason"
             )
         }

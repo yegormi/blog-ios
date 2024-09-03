@@ -1,5 +1,4 @@
 import Domain
-import Presentation
 
 public protocol ArticleDetailViewModelFactory {
     func makeViewModel(for article: Article) -> ArticleDetailViewModel
@@ -9,15 +8,18 @@ public final class DefaultArticleDetailViewModelFactory: ArticleDetailViewModelF
     private let fetchCommentsUseCase: FetchCommentsUseCase
     private let createCommentUseCase: CreateCommentUseCase
     private let deleteCommentUseCase: DeleteCommentUseCase
+    private let getCurrentUserUseCase: GetCurrentUserUseCase
 
     public init(
         fetchCommentsUseCase: FetchCommentsUseCase,
         createCommentUseCase: CreateCommentUseCase,
-        deleteCommentUseCase: DeleteCommentUseCase
+        deleteCommentUseCase: DeleteCommentUseCase,
+        getCurrentUserUseCase: GetCurrentUserUseCase
     ) {
         self.fetchCommentsUseCase = fetchCommentsUseCase
         self.createCommentUseCase = createCommentUseCase
         self.deleteCommentUseCase = deleteCommentUseCase
+        self.getCurrentUserUseCase = getCurrentUserUseCase
     }
 
     @MainActor
@@ -26,7 +28,8 @@ public final class DefaultArticleDetailViewModelFactory: ArticleDetailViewModelF
             article: article,
             fetchCommentsUseCase: self.fetchCommentsUseCase,
             createCommentUseCase: self.createCommentUseCase,
-            deleteCommentUseCase: self.deleteCommentUseCase
+            deleteCommentUseCase: self.deleteCommentUseCase,
+            getCurrentUserUserCase: self.getCurrentUserUseCase
         )
     }
 }

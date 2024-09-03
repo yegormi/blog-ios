@@ -11,21 +11,25 @@ public final class ArticleDetailViewModel: ObservableObject {
     @Published public var newCommentContent = ""
     @Published public var isLoading = false
     @Published public var errorMessage: String?
+    @Published public var user: User?
 
     private let fetchCommentsUseCase: FetchCommentsUseCase
     private let createCommentUseCase: CreateCommentUseCase
     private let deleteCommentUseCase: DeleteCommentUseCase
+    private let getCurrentUserUserCase: GetCurrentUserUseCase
 
     public init(
         article: Article,
         fetchCommentsUseCase: FetchCommentsUseCase,
         createCommentUseCase: CreateCommentUseCase,
-        deleteCommentUseCase: DeleteCommentUseCase
+        deleteCommentUseCase: DeleteCommentUseCase,
+        getCurrentUserUserCase: GetCurrentUserUseCase
     ) {
         self.article = article
         self.fetchCommentsUseCase = fetchCommentsUseCase
         self.createCommentUseCase = createCommentUseCase
         self.deleteCommentUseCase = deleteCommentUseCase
+        self.getCurrentUserUserCase = getCurrentUserUserCase
     }
 
     public func fetchComments() async {
@@ -61,6 +65,15 @@ public final class ArticleDetailViewModel: ObservableObject {
             self.comments.removeAll { $0.id == comment.id }
         } catch {
             self.errorMessage = "Failed to delete comment: \(error.localizedDescription)"
+        }
+    }
+
+    public func getUser() async {
+        do {
+            self.user = try await self.getCurrentUserUserCase.execute()
+        } catch {
+            let error = "Failed to load user: \(error.localizedDescription)"
+            logger.error("\(error)")
         }
     }
 }

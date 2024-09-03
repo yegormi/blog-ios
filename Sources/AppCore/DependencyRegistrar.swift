@@ -1,4 +1,5 @@
 import Data
+import DIContainer
 import Domain
 import Foundation
 import Networking
@@ -161,7 +162,8 @@ public struct DependencyRegistrar {
         let articleDetailViewModelFactory = DefaultArticleDetailViewModelFactory(
             fetchCommentsUseCase: useCases.commentUseCases.fetchCommentsUseCase,
             createCommentUseCase: useCases.commentUseCases.createCommentUseCase,
-            deleteCommentUseCase: useCases.commentUseCases.deleteCommentUseCase
+            deleteCommentUseCase: useCases.commentUseCases.deleteCommentUseCase,
+            getCurrentUserUseCase: useCases.authUseCases.getCurrentUserUseCase
         )
         let profileViewModel = ProfileViewModel(
             getCurrentUserUseCase: useCases.authUseCases.getCurrentUserUseCase,

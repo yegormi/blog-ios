@@ -31,7 +31,7 @@ public final class APIClient {
                 .value
 
             if let serverError = try? self.decoder.decode(ServerError.self, from: data) {
-                throw APIError.serverError(serverError.reason)
+                throw APIError.serverError(serverError)
             }
 
             return try self.decoder.decode(T.self, from: data)

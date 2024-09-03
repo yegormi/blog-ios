@@ -1,10 +1,17 @@
+import DIContainer
 import Domain
 import SwiftUI
 
 struct CommentRow: View {
+    let user: User
     let comment: Comment
     let onDelete: () -> Void
-    @EnvironmentObject var authViewModel: AuthViewModel
+
+    init(user: User, comment: Comment, onDelete: @escaping () -> Void) {
+        self.user = user
+        self.comment = comment
+        self.onDelete = onDelete
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -15,7 +22,7 @@ struct CommentRow: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                 Spacer()
-                if self.authViewModel.currentUser?.id == self.comment.user.id {
+                if self.user.id == self.comment.user.id {
                     Button(action: self.onDelete) {
                         Image(systemName: "trash")
                             .foregroundColor(.red)

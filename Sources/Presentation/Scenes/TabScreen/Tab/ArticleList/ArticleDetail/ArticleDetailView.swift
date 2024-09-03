@@ -1,12 +1,12 @@
+import DIContainer
 import Domain
 import SwiftUI
 
 public struct ArticleDetailView: View {
     @StateObject var viewModel: ArticleDetailViewModel
-    @EnvironmentObject var authViewModel: AuthViewModel
 
     public init(viewModel: ArticleDetailViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
     public var body: some View {
@@ -23,31 +23,31 @@ public struct ArticleDetailView: View {
                 if self.viewModel.isLoading {
                     ProgressView()
                 } else {
-                    ForEach(self.viewModel.comments) { comment in
-                        CommentRow(comment: comment) {
-                            Task { await self.viewModel.deleteComment(comment) }
+                    if let user = viewModel.user {
+                        ForEach(self.viewModel.comments) { comment in
+                            CommentRow(user: user, comment: comment) {
+                                Task { await self.viewModel.deleteComment(comment) }
+                            }
                         }
                     }
                 }
 
-                if self.authViewModel.isLoggedIn {
-                    HStack {
-                        TextField("Add a comment", text: self.$viewModel.newCommentContent)
-                        Button("Post") {
-                            Task { await self.viewModel.addComment() }
-                        }
-                        .disabled(self.viewModel.newCommentContent.isEmpty)
+                HStack {
+                    TextField("Add a comment", text: self.$viewModel.newCommentContent)
+                    Button("Post") {
+                        Task { await self.viewModel.addComment() }
                     }
-                } else {
-                    Text("Please log in to add comments")
-                        .italic()
+                    .disabled(self.viewModel.newCommentContent.isEmpty)
                 }
             }
             .padding()
         }
         .navigationTitle(self.viewModel.article.title)
         .onAppear {
-            Task { await self.viewModel.fetchComments() }
+            Task {
+                await self.viewModel.getUser()
+                await self.viewModel.fetchComments()
+            }
         }
         .alert("Error", isPresented: .constant(self.viewModel.errorMessage != nil), actions: {
             Button("OK", role: .cancel) {

@@ -1,15 +1,19 @@
+import DIContainer
 import Domain
 import SwiftUI
 
 public struct ArticleListView: View {
     @ObservedObject var viewModel: ArticleListViewModel
     private let makeViewModel: (Article) -> ArticleDetailViewModel
+    private let container: DIContainer
 
     public init(
         viewModel: ArticleListViewModel,
+        container: DIContainer,
         makeViewModel: @escaping (Article) -> ArticleDetailViewModel
     ) {
         self.viewModel = viewModel
+        self.container = container
         self.makeViewModel = makeViewModel
     }
 
