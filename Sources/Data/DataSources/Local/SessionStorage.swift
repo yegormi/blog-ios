@@ -2,8 +2,9 @@ import Combine
 import ConcurrencyExtras
 import Domain
 import Foundation
+import Networking
 
-public protocol SessionStorageProtocol {
+public protocol SessionStorageProtocol: SessionProvider {
     func authenticate(_ user: User)
     func setCurrentToken(_ token: String) throws
     func getCurrentToken() throws -> String?
@@ -13,7 +14,7 @@ public protocol SessionStorageProtocol {
 }
 
 public final class SessionStorage: SessionStorageProtocol {
-    private let keychain: KeychainStorage
+    private let keychain: KeychainStorageProtocol
 
     private let storage = LockIsolated(Storage())
     private let subject = PassthroughSubject<User?, Never>()
@@ -23,7 +24,7 @@ public final class SessionStorage: SessionStorageProtocol {
         var currentAuthenticationToken: String?
     }
 
-    public init(keychain: KeychainStorage) {
+    public init(keychain: KeychainStorageProtocol) {
         self.keychain = keychain
     }
 

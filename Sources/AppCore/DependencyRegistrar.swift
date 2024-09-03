@@ -13,24 +13,28 @@ public struct DependencyRegistrar {
 
     @MainActor
     public func registerDependencies() {
-        let tokenManager = TokenManager()
-        self.container.register(tokenManager)
+        let keychainStorage = KeychainStorage()
+        self.container.register(keychainStorage as KeychainStorageProtocol)
 
-        let apiClient = APIClient(tokenManager: tokenManager)
+        let sessionStorage = SessionStorage(keychain: keychainStorage)
+        self.container.register(sessionStorage as SessionStorageProtocol)
+
+        let apiClient = APIClient(sessionProvider: sessionStorage)
         self.container.register(apiClient)
 
-        let dataSources = self.registerDataSources(apiClient: apiClient, tokenManager: tokenManager)
+        let dataSources = self.registerDataSources(apiClient: apiClient, sessionStorage: sessionStorage)
         let repositories = self.registerRepositories(dataSources: dataSources)
         let useCases = self.registerUseCases(repositories: repositories)
+
         self.registerViewModels(useCases: useCases)
     }
 
-    private func registerDataSources(apiClient: APIClient, tokenManager: TokenManager) -> DataSources {
+    private func registerDataSources(apiClient: APIClient, sessionStorage _: SessionStorageProtocol) -> DataSources {
         let keychainStorage = KeychainStorage()
         let sessionStorage = SessionStorage(keychain: keychainStorage)
 
         let articleDataSource = ArticleRemoteDataSource(apiClient: apiClient)
-        let userDataSource = UserRemoteDataSource(apiClient: apiClient, tokenManager: tokenManager)
+        let userDataSource = UserRemoteDataSource(apiClient: apiClient, sessionStorage: sessionStorage)
         let commentDataSource = CommentRemoteDataSource(apiClient: apiClient)
 
         self.container.register(keychainStorage as KeychainStorageProtocol)
