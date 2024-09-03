@@ -28,7 +28,11 @@ public final class APIClient {
 
             request
                 .validate()
-                .responseDecodable(of: T.self, emptyResponseCodes: [204, 205]) { response in
+                .responseDecodable(
+                    of: T.self,
+                    decoder: self.decoder,
+                    emptyResponseCodes: [204, 205]
+                ) { response in
                     switch response.result {
                     case let .success(value):
                         continuation.resume(returning: value)
