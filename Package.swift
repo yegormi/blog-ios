@@ -15,6 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.9.1")),
+        .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", .upToNextMajor(from: "1.1.0")),
     ],
     targets: [
         .target(
@@ -36,7 +37,11 @@ let package = Package(
         ),
         .target(
             name: "Data",
-            dependencies: ["Domain", "Networking"]
+            dependencies: [
+                "Domain",
+                "Networking",
+                .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
+            ]
         ),
         .target(
             name: "Networking",
