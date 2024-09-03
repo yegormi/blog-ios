@@ -1,9 +1,9 @@
 import Foundation
 
 public enum APIError: LocalizedError {
+    case decodingError(Error)
     case invalidResponse
     case networkError(Error)
-    case decodingError(Error)
     case serverError(String)
 
     public var errorDescription: String? {
@@ -25,8 +25,8 @@ public enum APIError: LocalizedError {
             )
         case let .serverError(message):
             NSLocalizedString(
-                "Server error: \(message)",
-                comment: "Server error with message"
+                "\(message)",
+                comment: "Server error with message reason"
             )
         }
     }

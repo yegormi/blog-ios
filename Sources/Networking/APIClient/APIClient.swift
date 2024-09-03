@@ -19,27 +19,24 @@ public final class APIClient {
     }
 
     public func request<T: Decodable>(_ route: APIRoute<T>) async throws -> T {
-        try await withCheckedThrowingContinuation { continuation in
-            let request: DataRequest = if let multipartFormData = route.multipartFormData {
-                self.session.upload(multipartFormData: multipartFormData, with: route)
-            } else {
-                self.session.request(route)
+        let request: DataRequest = if let multipartFormData = route.multipartFormData {
+            self.session.upload(multipartFormData: multipartFormData, with: route)
+        } else {
+            self.session.request(route)
+        }
+
+        do {
+            let data = try await request
+                .serializingData(emptyResponseCodes: [204, 205])
+                .value
+
+            if let serverError = try? self.decoder.decode(ServerError.self, from: data) {
+                throw APIError.serverError(serverError.reason)
             }
 
-            request
-                .validate()
-                .responseDecodable(
-                    of: T.self,
-                    decoder: self.decoder,
-                    emptyResponseCodes: [204, 205]
-                ) { response in
-                    switch response.result {
-                    case let .success(value):
-                        continuation.resume(returning: value)
-                    case let .failure(error):
-                        continuation.resume(throwing: error)
-                    }
-                }
+            return try self.decoder.decode(T.self, from: data)
+        } catch {
+            throw APIError.from(error)
         }
     }
 }
