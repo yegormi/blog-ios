@@ -16,7 +16,7 @@ public final class KeychainStorage: KeychainStorageProtocol {
 
     private let serviceName: String
 
-    public init(serviceName: String = Bundle.main.bundleIdentifier ?? "com.yeblog.keychain") {
+    public init(serviceName: String = Bundle.main.bundleIdentifier ?? "com.yegormi.YeBlog.keychain") {
         self.serviceName = serviceName
     }
 

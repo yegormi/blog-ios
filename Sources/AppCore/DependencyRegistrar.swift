@@ -26,34 +26,49 @@ public struct DependencyRegistrar {
     }
 
     private func registerDataSources(apiClient: APIClient, tokenManager: TokenManager) -> DataSources {
+        let keychainStorage = KeychainStorage()
+        let sessionStorage = SessionStorage(keychain: keychainStorage)
+
         let articleDataSource = ArticleRemoteDataSource(apiClient: apiClient)
         let userDataSource = UserRemoteDataSource(apiClient: apiClient, tokenManager: tokenManager)
         let commentDataSource = CommentRemoteDataSource(apiClient: apiClient)
+
+        self.container.register(keychainStorage as KeychainStorageProtocol)
+        self.container.register(sessionStorage as SessionStorageProtocol)
 
         self.container.register(articleDataSource)
         self.container.register(userDataSource)
         self.container.register(commentDataSource)
 
         return DataSources(
-            articleDataSource: articleDataSource,
-            userDataSource: userDataSource,
-            commentDataSource: commentDataSource
+            local: DataSources.Local(
+                keychainStorage: keychainStorage,
+                sessionStorage: sessionStorage
+            ),
+            remote: DataSources.Remote(
+                articleDataSource: articleDataSource,
+                userDataSource: userDataSource,
+                commentDataSource: commentDataSource
+            )
         )
     }
 
     private func registerRepositories(dataSources: DataSources) -> Repositories {
-        let articleRepository = ArticleRepository(remoteDataSource: dataSources.articleDataSource)
-        let userRepository = UserRepository(remoteDataSource: dataSources.userDataSource)
-        let commentRepository = CommentRepository(remoteDataSource: dataSources.commentDataSource)
+        let articleRepository = ArticleRepository(remoteDataSource: dataSources.remote.articleDataSource)
+        let userRepository = UserRepository(remoteDataSource: dataSources.remote.userDataSource)
+        let commentRepository = CommentRepository(remoteDataSource: dataSources.remote.commentDataSource)
+        let sessionRepository = SessionRepository(sessionStorage: dataSources.local.sessionStorage)
 
         self.container.register(articleRepository as ArticleRepositoryProtocol)
         self.container.register(userRepository as UserRepositoryProtocol)
         self.container.register(commentRepository as CommentRepositoryProtocol)
+        self.container.register(sessionRepository as SessionRepositoryProtocol)
 
         return Repositories(
             articleRepository: articleRepository,
             userRepository: userRepository,
-            commentRepository: commentRepository
+            commentRepository: commentRepository,
+            sessionRepository: sessionRepository
         )
     }
 
@@ -101,14 +116,33 @@ public struct DependencyRegistrar {
             deleteCommentUseCase: deleteCommentUseCase
         )
 
+        // Session Use Cases
+        let authenticateUserUseCase = AuthenticateUserUseCaseImpl(sessionRepository: repositories.sessionRepository)
+        let getSessionUserUseCase = GetSessionUserUseCaseImpl(sessionRepository: repositories.sessionRepository)
+        let getTokenUseCase = GetTokenUseCaseImpl(sessionRepository: repositories.sessionRepository)
+        let observeCurrentUserUseCase = ObserveCurrentUserUseCaseImpl(sessionRepository: repositories.sessionRepository)
+        let sessionLogoutUseCase = SessionLogoutUseCaseImpl(sessionRepository: repositories.sessionRepository)
+        let setTokenUseCase = SetTokenUseCaseImpl(sessionRepository: repositories.sessionRepository)
+
+        let sessionUseCases = SessionUseCases(
+            authenticateUserUseCase: authenticateUserUseCase,
+            getSessionUserUseCase: getSessionUserUseCase,
+            getTokenUseCase: getTokenUseCase,
+            observeCurrentUserUseCase: observeCurrentUserUseCase,
+            sessionLogoutUseCase: sessionLogoutUseCase,
+            setTokenUseCase: setTokenUseCase
+        )
+
         self.container.register(articleUseCases)
         self.container.register(authUseCases)
         self.container.register(commentUseCases)
+        self.container.register(sessionUseCases)
 
         return UseCases(
             articleUseCases: articleUseCases,
             authUseCases: authUseCases,
-            commentUseCases: commentUseCases
+            commentUseCases: commentUseCases,
+            sessionUseCases: sessionUseCases
         )
     }
 
