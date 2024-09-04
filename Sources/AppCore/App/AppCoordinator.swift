@@ -23,7 +23,6 @@ class AppCoordinator: Coordinator {
     }
 
     func start() async {
-        try? await Task.sleep(for: .seconds(1))
         logger.info("Splash screen displayed, proceeding to authentication check")
         await self.checkAuthentication()
     }

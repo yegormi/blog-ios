@@ -1,11 +1,12 @@
 import Domain
 import Foundation
+import os
+
+private let logger = Logger(subsystem: "ArticleListViewModel", category: "Presentation")
 
 @MainActor
 public final class ArticleListViewModel: ObservableObject {
     @Published public var articles: [Article] = []
-    @Published public var showError = false
-    @Published public var errorMessage = ""
 
     private let fetchArticlesUseCase: FetchArticlesUseCase
 
@@ -17,8 +18,7 @@ public final class ArticleListViewModel: ObservableObject {
         do {
             self.articles = try await self.fetchArticlesUseCase.execute()
         } catch {
-            self.errorMessage = error.localizedDescription
-            self.showError = true
+            logger.error("\(error.localizedDescription)")
         }
     }
 }

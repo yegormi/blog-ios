@@ -32,10 +32,5 @@ public struct ArticleListView: View {
         .refreshable {
             await self.viewModel.fetchArticles()
         }
-        .alert("Error", isPresented: self.$viewModel.showError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(self.viewModel.errorMessage)
-        }
     }
 }
