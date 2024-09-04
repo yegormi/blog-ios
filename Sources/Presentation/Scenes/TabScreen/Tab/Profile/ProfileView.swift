@@ -1,3 +1,4 @@
+import Domain
 import SwiftUI
 
 public struct ProfileView: View {
@@ -11,73 +12,15 @@ public struct ProfileView: View {
     }
 
     public var body: some View {
-        List {
-            Section {
-                if let user = viewModel.user {
-                    HStack {
-                        Spacer()
-                        VStack {
-                            if let avatarURL = user.avatarUrl {
-                                AsyncImage(url: avatarURL) { image in
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                } placeholder: {
-                                    ProgressView()
-                                }
-                                .frame(width: 100, height: 100)
-                                .clipShape(Circle())
-                            } else {
-                                Image(systemName: "person.circle.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 100, height: 100)
-                                    .foregroundColor(.gray)
-                            }
-
-                            Button("Change Avatar") {
-                                self.showingImagePicker = true
-                            }
-                            .padding(.top, 8)
-
-                            if user.avatarUrl != nil {
-                                Button("Remove Avatar") {
-                                    Task {
-                                        await self.viewModel.removeAvatar()
-                                    }
-                                }
-                                .foregroundColor(.red)
-                                .padding(.top, 4)
-                            }
-                        }
-                        Spacer()
-                    }
-                    .padding()
-
-                    HStack {
-                        Text("Username")
-                        Spacer()
-                        Text(user.username)
-                            .foregroundColor(.gray)
-                    }
-
-                    HStack {
-                        Text("Email")
-                        Spacer()
-                        Text(user.email)
-                            .foregroundColor(.gray)
-                    }
-                }
+        ScrollView {
+            VStack(spacing: 20) {
+                self.profileHeader
+                self.actionsSection
             }
-
-            Section {
-                Button("Logout") {
-                    self.showingLogoutAlert = true
-                }
-                .foregroundColor(.red)
-            }
+            .padding()
         }
         .navigationTitle("Profile")
+        .background(Color(.systemGroupedBackground))
         .task {
             await self.viewModel.fetchProfile()
         }
@@ -109,12 +52,109 @@ public struct ProfileView: View {
         }
         .overlay(Group {
             if self.viewModel.isLoading {
-                ProgressView()
-                    .scaleEffect(1.5)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.black.opacity(0.4))
+                Color.black.opacity(0.4)
+                    .overlay(
+                        ProgressView()
+                            .scaleEffect(1.5)
+                            .tint(.white)
+                    )
+                    .ignoresSafeArea()
             }
         })
+    }
+
+    private var profileHeader: some View {
+        VStack(spacing: 0) {
+            if let user = viewModel.user {
+                HStack(spacing: 8) {
+                    self.avatarView(for: user)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(user.username)
+                            .font(.title2)
+                            .fontWeight(.bold)
+
+                        Text(user.email)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+
+                    Spacer()
+                }
+                .padding()
+                .background(Color(.secondarySystemGroupedBackground))
+                .cornerRadius(12)
+
+                self.avatarActionButtons
+            }
+        }
+    }
+
+    private func avatarView(for user: User) -> some View {
+        Group {
+            if let avatarURL = user.avatarUrl {
+                AsyncImage(url: avatarURL) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                } placeholder: {
+                    ProgressView()
+                }
+            } else {
+                Image(systemName: "person.circle.fill")
+                    .resizable()
+                    .foregroundColor(.gray)
+            }
+        }
+        .frame(width: 80, height: 80)
+        .clipShape(Circle())
+    }
+
+    private var avatarActionButtons: some View {
+        HStack(spacing: 12) {
+            Button(action: {
+                self.showingImagePicker = true
+            }) {
+                Text("Change Avatar")
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 16)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+
+            if self.viewModel.user?.avatarUrl != nil {
+                Button("Remove Avatar") {
+                    Task {
+                        await self.viewModel.removeAvatar()
+                    }
+                }
+                .foregroundColor(.red)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 16)
+                .background(Color(.systemBackground))
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.red, lineWidth: 1)
+                )
+            }
+        }
+        .padding(.top, 12)
+    }
+
+    private var actionsSection: some View {
+        Button(action: {
+            self.showingLogoutAlert = true
+        }) {
+            Text("Logout")
+                .foregroundColor(.red)
+                .frame(maxWidth: .infinity)
+                .padding(14)
+                .background(Color(.systemBackground))
+                .clipShape(Capsule())
+                .contentShape(Capsule())
+        }
     }
 }
 
