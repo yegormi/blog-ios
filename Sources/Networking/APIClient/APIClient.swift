@@ -25,17 +25,27 @@ public final class APIClient {
             self.session.request(route)
         }
 
-        do {
-            let data = try await request
-                .serializingData(emptyResponseCodes: [204, 205])
-                .value
+        let result = await request
+            .serializingData(emptyResponseCodes: [204, 205])
+            .result
+
+        switch result {
+        case let .success(data):
+            if data.isEmpty {
+                if let emptyInstance = Empty.emptyValue() as? T {
+                    return emptyInstance
+                } else {
+                    throw APIError.unexpectedEmptyResponse
+                }
+            }
 
             if let serverError = try? self.decoder.decode(ServerError.self, from: data) {
                 throw APIError.serverError(serverError)
             }
 
             return try self.decoder.decode(T.self, from: data)
-        } catch {
+
+        case let .failure(error):
             throw APIError.from(error)
         }
     }

@@ -43,11 +43,9 @@ public struct ArticleDetailView: View {
             .padding()
         }
         .navigationTitle(self.viewModel.article.title)
-        .onAppear {
-            Task {
-                await self.viewModel.getUser()
-                await self.viewModel.fetchComments()
-            }
+        .task {
+            await self.viewModel.getUser()
+            await self.viewModel.fetchComments()
         }
         .alert("Error", isPresented: .constant(self.viewModel.errorMessage != nil), actions: {
             Button("OK", role: .cancel) {

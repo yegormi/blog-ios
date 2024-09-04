@@ -70,7 +70,6 @@ public final class ProfileViewModel: ObservableObject {
         self.isLoading = true
         do {
             try await self.logoutUseCase.execute()
-            self.user = nil
             self.isLoading = false
         } catch {
             self.errorMessage = "Failed to logout: \(error.localizedDescription)"

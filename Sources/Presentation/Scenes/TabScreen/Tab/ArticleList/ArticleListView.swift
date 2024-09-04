@@ -3,7 +3,7 @@ import Domain
 import SwiftUI
 
 public struct ArticleListView: View {
-    @ObservedObject var viewModel: ArticleListViewModel
+    @StateObject var viewModel: ArticleListViewModel
     private let makeViewModel: (Article) -> ArticleDetailViewModel
     private let container: DIContainer
 
@@ -12,7 +12,7 @@ public struct ArticleListView: View {
         container: DIContainer,
         makeViewModel: @escaping (Article) -> ArticleDetailViewModel
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.container = container
         self.makeViewModel = makeViewModel
     }
@@ -25,12 +25,12 @@ public struct ArticleListView: View {
                 ArticleRow(article: article)
             }
         }
-        .refreshable {
+        .navigationTitle("Articles")
+        .task {
             await self.viewModel.fetchArticles()
         }
-        .navigationTitle("Articles")
-        .onAppear {
-            Task { await self.viewModel.fetchArticles() }
+        .refreshable {
+            await self.viewModel.fetchArticles()
         }
         .alert("Error", isPresented: self.$viewModel.showError) {
             Button("OK", role: .cancel) {}

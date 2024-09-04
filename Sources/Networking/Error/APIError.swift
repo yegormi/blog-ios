@@ -5,10 +5,11 @@ public enum APIError: LocalizedError {
     case invalidResponse
     case networkError(Error)
     case serverError(ServerError)
+    case unexpectedEmptyResponse
 
     public var errorDescription: String? {
         switch self {
-        case .invalidResponse:
+        case .invalidResponse, .unexpectedEmptyResponse:
             NSLocalizedString(
                 "The server returned an invalid response.",
                 comment: "Invalid server response error"
@@ -33,7 +34,7 @@ public enum APIError: LocalizedError {
 
     public var failureReason: String? {
         switch self {
-        case .invalidResponse:
+        case .invalidResponse, .unexpectedEmptyResponse:
             NSLocalizedString(
                 "The server's response was not in the expected format.",
                 comment: "Invalid response failure reason"
@@ -58,7 +59,7 @@ public enum APIError: LocalizedError {
 
     public var recoverySuggestion: String? {
         switch self {
-        case .invalidResponse, .serverError:
+        case .invalidResponse, .serverError, .unexpectedEmptyResponse:
             NSLocalizedString(
                 "Please try again later or contact support if the problem persists.",
                 comment: "Recovery suggestion for server errors"

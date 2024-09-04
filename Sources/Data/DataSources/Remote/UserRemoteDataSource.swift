@@ -24,7 +24,10 @@ public final class UserRemoteDataSource {
     public func register(username: String, email: String, password: String) async throws -> UserResponse {
         let body = RegisterRequest(username: username, email: email, password: password)
         let response = try await apiClient.request(.register(body))
+
         try self.sessionStorage.setCurrentToken(response.token)
+        self.sessionStorage.authenticate(response.user.toDomain())
+
         return response
     }
 

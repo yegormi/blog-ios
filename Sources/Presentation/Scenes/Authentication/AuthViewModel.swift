@@ -3,7 +3,6 @@ import Foundation
 
 @MainActor
 public final class AuthViewModel: ObservableObject {
-    @Published public var isLoggedIn = false
     @Published public var currentUser: User?
     @Published public var showError = false
     @Published public var errorMessage = ""
@@ -29,7 +28,6 @@ public final class AuthViewModel: ObservableObject {
         do {
             let user = try await self.loginUseCase.execute(email: email, password: password)
             self.currentUser = user
-            self.isLoggedIn = true
         } catch {
             self.errorMessage = error.localizedDescription
             self.showError = true
@@ -40,7 +38,6 @@ public final class AuthViewModel: ObservableObject {
         do {
             try await self.logoutUseCase.execute()
             self.currentUser = nil
-            self.isLoggedIn = false
         } catch {
             self.errorMessage = error.localizedDescription
             self.showError = true
@@ -51,7 +48,6 @@ public final class AuthViewModel: ObservableObject {
         do {
             let user = try await registerUseCase.execute(username: username, email: email, password: password)
             self.currentUser = user
-            self.isLoggedIn = true
         } catch {
             self.errorMessage = error.localizedDescription
             self.showError = true

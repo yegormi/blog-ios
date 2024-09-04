@@ -14,7 +14,7 @@ public class LoggedInCoordinator: Coordinator {
         self.container = container
     }
 
-    public func start() {
+    public func start() async {
         // Additional setup if needed
     }
 }

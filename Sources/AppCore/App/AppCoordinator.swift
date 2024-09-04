@@ -1,7 +1,10 @@
 import Combine
 import DIContainer
+import os
 import Presentation
 import SwiftUI
+
+private let logger = Logger(subsystem: "AppCoordinator", category: "AppCore")
 
 enum AppState: Equatable {
     case splash
@@ -12,7 +15,6 @@ enum AppState: Equatable {
 class AppCoordinator: Coordinator {
     @Published var state: AppState = .splash
     private let container: DIContainer
-    private var cancellables = Set<AnyCancellable>()
 
     public var diContainer: DIContainer { self.container }
 
@@ -20,13 +22,16 @@ class AppCoordinator: Coordinator {
         self.container = container
     }
 
+    func start() async {
+        try? await Task.sleep(for: .seconds(1))
+        logger.info("Splash screen displayed, proceeding to authentication check")
+        await self.checkAuthentication()
+    }
+
     @MainActor
-    func start() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            Task {
-                await self.checkAuthentication()
-            }
-        }
+    private func setState(_ newState: AppState) {
+        logger.info("Updating app state to \(String(describing: newState))")
+        self.state = newState
     }
 
     private func checkAuthentication() async {
@@ -35,16 +40,36 @@ class AppCoordinator: Coordinator {
 
         do {
             if let token = try session.getTokenUseCase.execute() {
+                logger.info("Token found, attempting to set token and get current user")
                 try session.setTokenUseCase.execute(token: token)
                 let user = try await auth.getCurrentUserUseCase.execute()
+                logger.info("User authenticated successfully")
                 session.authenticateUserUseCase.execute(user: user)
-                self.state = .loggedIn(.articles)
+                await self.setState(.loggedIn(.articles))
             } else {
-                self.state = .auth
+                logger.info("No token found, transitioning to auth state")
+                await self.setState(.auth)
             }
         } catch {
-            self.state = .auth
-            try? session.sessionLogoutUseCase.execute()
+            logger.error("Authentication error: \(error.localizedDescription)")
+            await self.setState(.auth)
+            do {
+                try session.sessionLogoutUseCase.execute()
+                logger.info("Session logged out due to authentication error")
+            } catch {
+                logger.error("Failed to log out session: \(error.localizedDescription)")
+            }
+        }
+
+        logger.info("Starting to observe current user")
+        for await user in session.observeCurrentUserUseCase.execute() {
+            if user == nil {
+                logger.info("User logged out, transitioning to auth state")
+                await self.setState(.auth)
+            } else {
+                logger.info("User logged in, transitioning to logged in state")
+                await self.setState(.loggedIn(.articles))
+            }
         }
     }
 }

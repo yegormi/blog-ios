@@ -1,13 +1,13 @@
 import SwiftUI
 
 public struct ProfileView: View {
-    @ObservedObject var viewModel: ProfileViewModel
+    @StateObject var viewModel: ProfileViewModel
     @State private var showingImagePicker = false
     @State private var inputImage: UIImage?
     @State private var showingLogoutAlert = false
 
     public init(viewModel: ProfileViewModel) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
     public var body: some View {
@@ -78,10 +78,8 @@ public struct ProfileView: View {
             }
         }
         .navigationTitle("Profile")
-        .onAppear {
-            Task {
-                await self.viewModel.fetchProfile()
-            }
+        .task {
+            await self.viewModel.fetchProfile()
         }
         .sheet(isPresented: self.$showingImagePicker) {
             ImagePicker(image: self.$inputImage)
