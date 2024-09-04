@@ -13,6 +13,10 @@ public protocol SessionStorageProtocol: SessionInterceptor {
     func logout() throws
 }
 
+public extension SessionStorageProtocol {
+    func getCurrentUsers() -> AsyncStream<User?> { .never }
+}
+
 public final class SessionStorage: SessionStorageProtocol {
     private let keychain: KeychainStorageProtocol
 
