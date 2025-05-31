@@ -4,7 +4,7 @@ public protocol ArticleDetailViewModelFactory {
     func makeViewModel(for article: Article) -> ArticleDetailViewModel
 }
 
-public final class DefaultArticleDetailViewModelFactory: ArticleDetailViewModelFactory {
+public final class DefaultArticleDetailViewModelFactory: @preconcurrency ArticleDetailViewModelFactory {
     private let fetchCommentsUseCase: FetchCommentsUseCase
     private let createCommentUseCase: CreateCommentUseCase
     private let deleteCommentUseCase: DeleteCommentUseCase

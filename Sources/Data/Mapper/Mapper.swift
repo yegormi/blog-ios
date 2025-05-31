@@ -10,7 +10,9 @@ extension ArticleDTO {
             id: id,
             title: title,
             content: content,
-            userId: userId
+            userId: userId,
+            createdAt: createdAt,
+            updatedAt: updatedAt
         )
     }
 }
@@ -21,7 +23,9 @@ extension Article {
             id: id,
             title: title,
             content: content,
-            userId: userId
+            userId: userId,
+            createdAt: createdAt,
+            updatedAt: updatedAt
         )
     }
 }
