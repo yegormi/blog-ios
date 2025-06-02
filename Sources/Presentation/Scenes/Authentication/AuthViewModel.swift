@@ -32,8 +32,8 @@ public final class AuthViewModel: ObservableObject {
             let user = try await self.loginUseCase.execute(email: email, password: password)
             self.currentUser = user
         } catch {
-            logger.error("\(error.localizedDescription)")
-            self.errorMessage = error.localizedDescription
+            logger.error("\(error)")
+            self.errorMessage = "\(error)"
             self.showError = true
         }
     }
@@ -43,8 +43,8 @@ public final class AuthViewModel: ObservableObject {
             try await self.logoutUseCase.execute()
             self.currentUser = nil
         } catch {
-            logger.error("\(error.localizedDescription)")
-            self.errorMessage = error.localizedDescription
+            logger.error("\(error)")
+            self.errorMessage = "\(error)"
             self.showError = true
         }
     }
@@ -54,8 +54,8 @@ public final class AuthViewModel: ObservableObject {
             let user = try await registerUseCase.execute(username: username, email: email, password: password)
             self.currentUser = user
         } catch {
-            logger.error("\(error.localizedDescription)")
-            self.errorMessage = error.localizedDescription
+            logger.error("\(error)")
+            self.errorMessage = "\(error)"
             self.showError = true
         }
     }

@@ -165,6 +165,9 @@ public struct DependencyRegistrar {
             deleteCommentUseCase: useCases.commentUseCases.deleteCommentUseCase,
             getCurrentUserUseCase: useCases.authUseCases.getCurrentUserUseCase
         )
+        let createArticleViewModelFactory = DefaultCreateArticleViewModelFactory(
+            createArticleUseCase: useCases.articleUseCases.createArticleUseCase
+        )
         let profileViewModel = ProfileViewModel(
             getCurrentUserUseCase: useCases.authUseCases.getCurrentUserUseCase,
             uploadAvatarUseCase: useCases.authUseCases.uploadAvatarUseCase,
@@ -175,6 +178,7 @@ public struct DependencyRegistrar {
         self.container.register(articleListViewModel)
         self.container.register(authViewModel)
         self.container.register(articleDetailViewModelFactory as ArticleDetailViewModelFactory)
+        self.container.register(createArticleViewModelFactory as CreateArticleViewModelFactory)
         self.container.register(profileViewModel)
     }
 }

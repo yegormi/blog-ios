@@ -9,7 +9,7 @@ class LoggingMonitor: EventMonitor {
         self.logFullRequest(urlRequest)
     }
 
-    func request(_ request: DataRequest, didParseResponse response: DataResponse<some Any, AFError>) {
+    func request(_: DataRequest, didParseResponse response: DataResponse<some Any, AFError>) {
         guard let httpResponse = response.response else { return }
         logFullResponse(httpResponse, request: response.request, data: response.data)
     }

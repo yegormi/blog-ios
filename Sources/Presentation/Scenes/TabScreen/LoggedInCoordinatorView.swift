@@ -1,15 +1,16 @@
+import DIContainer
 import SwiftUI
 
 public struct LoggedInCoordinatorView: View {
     @StateObject var coordinator: LoggedInCoordinator
-    let articleListViewModel: ArticleListViewModel
-    let articleDetailViewModelFactory: ArticleDetailViewModelFactory
+
+    @Inject private var articleListViewModel: ArticleListViewModel
+    @Inject private var articleDetailViewModelFactory: ArticleDetailViewModelFactory
+    @Inject private var createArticleViewModelFactory: CreateArticleViewModelFactory
 
     public init(coordinator: LoggedInCoordinator, initialState: LoggedInState) {
         self._coordinator = StateObject(wrappedValue: coordinator)
         coordinator.state = initialState
-        self.articleDetailViewModelFactory = coordinator.container.resolve() as ArticleDetailViewModelFactory
-        self.articleListViewModel = coordinator.container.resolve() as ArticleListViewModel
     }
 
     public var body: some View {
@@ -24,7 +25,8 @@ public struct LoggedInCoordinatorView: View {
             ArticleListView(
                 viewModel: self.articleListViewModel,
                 container: self.coordinator.container,
-                makeViewModel: self.articleDetailViewModelFactory.makeViewModel(for:)
+                makeViewModel: self.articleDetailViewModelFactory.makeViewModel(for:),
+                makeCreateArticleViewModel: self.createArticleViewModelFactory.makeViewModel
             )
         }
         .tag(LoggedInState.articles)
