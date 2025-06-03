@@ -4,7 +4,7 @@ public enum APIError: LocalizedError {
     case decodingError(Error)
     case invalidResponse
     case networkError(Error)
-    case serverError(ServerError)
+    case serverError(APIErrorDTO)
     case unexpectedEmptyResponse
 
     public var errorDescription: String? {
@@ -26,8 +26,8 @@ public enum APIError: LocalizedError {
             )
         case let .serverError(error):
             NSLocalizedString(
-                "\(error.reason)",
-                comment: "Server error with message reason"
+                "\(error.message)",
+                comment: "Server error with message"
             )
         }
     }
